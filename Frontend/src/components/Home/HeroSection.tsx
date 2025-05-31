@@ -14,7 +14,7 @@ function HeroSection({ onExplore }: { onExplore: () => void }) {
           is an adventure!
         </p>
         <div className='flex flex-col sm:flex-row gap-6 justify-center '>
-          <Button className='bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 '>
+          <Button className='bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60 max-w-2xl  '>
             <span className='flex items-center gap-2'>
               <Sparkles className='inline' />
               Start Exploring!
