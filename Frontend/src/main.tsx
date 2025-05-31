@@ -10,6 +10,7 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import AppLayout from './AppLayout';
 import MapPage from './pages/Map';
+import MyProfile from './pages/MyProfile';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: '', element: <HomePage /> },
       { path: 'map', element: <MapPage /> },
       { path: 'profile', element: <ViewProfile /> },
+      { path: 'my-profile', element: <MyProfile /> },
       { path: 'signup', element: <SignupPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'safety-privacy', element: <SafetyPrivacyPage /> },

@@ -46,6 +46,10 @@ function ProfileInfoCard({ user }: { user: typeof user }) {
               {user.location}
             </span>
           </div>
+          <Button className='bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'>
+            <Edit className='w-5 h-5 mr-2' />
+            Edit Profile
+          </Button>
         </div>
       </div>
       {/* Stats */}
@@ -146,16 +150,18 @@ function ProfileActions() {
 
 // --- Main Page ---
 
-const ViewProfile = () => {
+const MyProfile = () => {
   return (
-    <div className='container mx-auto px-6 py-8 relative z-10'>
-      <div className='max-w-4xl mx-auto space-y-8'>
-        <ProfileInfoCard user={user} />
-        <ActivityHistoryCard history={userHistory} />
-        <ProfileActions />
+    <div className='min-h-screen bg-gradient-to-br from-yellow-300 via-pink-300 to-purple-400 relative overflow-hidden'>
+      <div className='container mx-auto px-6 py-8 relative z-10'>
+        <div className='max-w-4xl mx-auto space-y-8'>
+          <ProfileInfoCard user={user} />
+          <ActivityHistoryCard history={userHistory} />
+          <ProfileActions />
+        </div>
       </div>
     </div>
   );
 };
 
-export default ViewProfile;
+export default MyProfile;
