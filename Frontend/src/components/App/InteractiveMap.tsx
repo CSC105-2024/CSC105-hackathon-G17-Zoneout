@@ -273,16 +273,6 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
             iconSVGs.Coffee ||
             '<circle cx="12" cy="12" r="8" />';
 
-          function handleMarkerClick(
-            post: Post
-          ): ((e: google.maps.MapMouseEvent) => void) | undefined {
-            return (e: google.maps.MapMouseEvent) => {
-              e.stop();
-              if (onMarkerClick) {
-                onMarkerClick(post);
-              }
-            };
-          }
           return (
             <Marker
               onClick={() => handleMarkerClick(post)}
