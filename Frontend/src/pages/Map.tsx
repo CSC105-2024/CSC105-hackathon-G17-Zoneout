@@ -2,10 +2,18 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import InteractiveMap from '@/components/App/InteractiveMap';
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
+import PostModal from '@/components/App/PostModal';
+
+const samplePost = {
+  title: 'Study Group: Calculus',
+  author: 'Alice',
+  description:
+    "Let's study together for the upcoming calculus exam! Meet at the library at 5pm.",
+};
 
 function MapCard() {
   return (
@@ -49,14 +57,27 @@ const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   // const navigate = useNavigate();
+  const [selectedPost, setSelectedPost] = useState(samplePost);
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-yellow-300 via-pink-300 to-purple-400 relative overflow-hidden'>
+    <div className='min-h-screen relative overflow-hidden'>
       <MapCard />
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
       <PostsNearbyCounter count={5} />
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
       <CreatePostModal open={showCreatePost} onOpenChange={setShowCreatePost} />
+      <PostModal
+        open={!!selectedPost}
+        post={selectedPost}
+        onClose={() => setSelectedPost(null)}
+        onViewProfile={() => {
+          // test: alert or console.log
+          alert('View Profile clicked!');
+        }}
+        onJoin={() => {
+          alert('Join clicked!');
+        }}
+      />
     </div>
   );
 };

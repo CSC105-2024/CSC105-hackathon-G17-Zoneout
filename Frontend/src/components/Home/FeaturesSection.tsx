@@ -1,3 +1,4 @@
+import SectionCard from './SectionCard';
 import { Calendar, Heart, MapPin, Users } from 'lucide-react';
 import { Card } from '../ui/card';
 
@@ -26,10 +27,9 @@ const features = [
     description: 'Make meaningful friendships and create lasting memories!',
   },
 ];
-
 function FeaturesSection() {
   return (
-    <section className='relative z-10 container mx-auto px-6 pb-16'>
+    <SectionCard>
       <div className='max-w-6xl mx-auto'>
         <h3 className='text-4xl font-black text-white text-center mb-12 drop-shadow-lg'>
           Why You'll Love ConnectMap!
@@ -38,16 +38,22 @@ function FeaturesSection() {
           {features.map((feature, index) => (
             <Card
               key={index}
-              className='p-8 bg-white/90 backdrop-blur-sm border-4 border-orange-300 rounded-3xl shadow-2xl transform hover:scale-105 hover:rotate-1 transition-all duration-300'
+              className='p-8 bg-white/90 backdrop-blur-sm border-4 border-[#fde68a] rounded-3xl shadow-2xl transform hover:scale-105 hover:rotate-1 transition-all duration-300'
             >
               <div className='text-center'>
-                <div className='w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg transform rotate-6 text-white'>
+                <div className='w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg transform text-white'>
                   {feature.icon}
                 </div>
-                <h4 className='text-xl font-black text-purple-800 mb-4'>
+                <h4
+                  className='text-xl font-black mb-4'
+                  style={{ color: 'var(--color-accent-primary)' }}
+                >
                   {feature.title}
                 </h4>
-                <p className='text-purple-600 font-medium'>
+                <p
+                  className=' font-medium'
+                  style={{ color: 'var(--color-accent-secondary)' }}
+                >
                   {feature.description}
                 </p>
               </div>
@@ -55,7 +61,7 @@ function FeaturesSection() {
           ))}
         </div>
       </div>
-    </section>
+    </SectionCard>
   );
 }
 

@@ -86,7 +86,7 @@ const SignupForm = ({
         type='submit'
         className='w-full text-white py-2 mt-4'
         style={{
-          background: 'var(--color-accent)',
+          background: 'var(--color-accent-primary)',
           borderRadius: 'var(--radius)',
         }}
       >

@@ -8,7 +8,7 @@ interface AuthLayoutProps {
 const AuthLayout = ({ children }: AuthLayoutProps) => (
   <div
     className='min-h-screen flex items-center justify-center '
-    style={{ color: 'var(--color-accent)' }}
+    style={{ color: 'var(--color-accent-primary)' }}
   >
     <div className='w-full max-w-md p-8 bg-white rounded-xl shadow-lg'>
       {children}

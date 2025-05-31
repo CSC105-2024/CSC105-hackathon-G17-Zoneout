@@ -29,20 +29,40 @@ const NavBar = () => {
       </div>
 
       {/* NAVIGATION LINKS */}
-      <div className='flex items-center gap-3'>
-        <Button onClick={() => navigate('/login')} variant='ghost'>
+      <div className='flex items-center gap-3 text-purple-800'>
+        <Button
+          onClick={() => navigate('/login')}
+          variant='ghost'
+          className='rounded-xl hover:bg-[var(--nav-bg-color)]'
+        >
           <LogIn className='w-5 h-5 mr-2' /> Login
         </Button>
-        <Button onClick={() => navigate('/signup')} variant='ghost'>
+        <Button
+          onClick={() => navigate('/signup')}
+          variant='ghost'
+          className='rounded-xl hover:bg-[var(--nav-bg-color)]'
+        >
           <UserPlus className='w-5 h-5 mr-2' /> Sign Up
         </Button>
-        <Button onClick={() => navigate('/map')} variant='ghost'>
+        <Button
+          onClick={() => navigate('/map')}
+          variant='ghost'
+          className='rounded-xl hover:bg-[var(--nav-bg-color)]'
+        >
           <MapPin className='w-5 h-5 mr-2' /> Map
         </Button>
-        <Button onClick={() => navigate('/safety-privacy')} variant='ghost'>
+        <Button
+          onClick={() => navigate('/safety-privacy')}
+          variant='ghost'
+          className='rounded-xl hover:bg-[var(--nav-bg-color)]'
+        >
           <Shield className='w-5 h-5 mr-2' /> Safety & Privacy
         </Button>
-        <Button onClick={() => navigate('/profile')} variant='ghost'>
+        <Button
+          onClick={() => navigate('/profile')}
+          variant='ghost '
+          className='rounded-xl hover:bg-[var(--nav-bg-color)]'
+        >
           <User className='w-5 h-5 mr-2' /> Profile
         </Button>
         {/* {isHome && (

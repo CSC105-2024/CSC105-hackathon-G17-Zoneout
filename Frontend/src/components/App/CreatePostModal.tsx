@@ -162,7 +162,7 @@ const CreatePostModal = ({ open, onOpenChange }) => {
         <div className='flex justify-end gap-2 mt-4'>
           <Button
             type='submit'
-            className='bg-[var(--color-accent)] text-white font-bold'
+            className='bg-[var(--color-accent-primary)] text-white font-bold'
             style={{ borderRadius: 'var(--radius)' }}
           >
             Create

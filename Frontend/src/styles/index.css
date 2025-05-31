@@ -3,6 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+* {
+  box-sizing: border-box;
+  font-family: 'Reem Kufi', sans-serif;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -49,9 +54,10 @@
     #a78bfa
   ); /* yellow-300, pink-300, purple-400 */
   --nav-bg-color: rgba(255, 255, 255, 0.4);
-  --color-primary: #000000; 
-  --color-secondary: #ffffff; 
-  --color-accent: #6b21a8; /* Accent (used as primary in signup/login) */
+  --color-primary: #000000;
+  --color-secondary: #ffffff;
+  --color-accent-primary: #6b21a8; /* Accent (used as primary in signup/login) */
+  --color-accent-secondary: #8427d0; /* Accent (used as secondary in signup/login) */
 
   /* Library CSS */
   --radius: 0.7rem;

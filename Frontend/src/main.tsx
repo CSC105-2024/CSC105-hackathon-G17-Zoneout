@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import './styles/index.css'; // Global styles
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ViewProfile from './pages/ViewProfile';
 import NotFound from './pages/NotFound';
@@ -23,9 +23,9 @@ const router = createBrowserRouter([
       { path: 'signup', element: <SignupPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'safety-privacy', element: <SafetyPrivacyPage /> },
-      { path: '*', element: <NotFound /> },
     ],
   },
+  { path: '*', element: <NotFound /> },
 ]);
 
 createRoot(document.getElementById('root')!).render(
