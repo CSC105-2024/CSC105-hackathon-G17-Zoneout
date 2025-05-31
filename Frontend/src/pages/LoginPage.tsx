@@ -6,8 +6,10 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (data: any) => {
-    // Call your login API here
-    // If success:
+    const {mutateAsync: login,
+      isLoading: isLoginLoading, 
+      error
+    } = useLogin(); 
     navigate('/map');
   };
 

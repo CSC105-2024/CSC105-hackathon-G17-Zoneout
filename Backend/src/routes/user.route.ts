@@ -29,4 +29,13 @@ userRouter.put(
   userController.updateProfileController
 );
 
+<<<<<<< HEAD
 export { userRouter };
+=======
+userRouter.get('/current', authenticateToken, userController.getCurrentUserController);
+userRouter.put('/:userId/update-phone', authenticateToken, userController.updatePhonenumberController);
+userRouter.put('/:userId/update-name', authenticateToken,userController.updateUsernameController);
+userRouter.put('/:userId/update-profile', authenticateToken , userController.updateProfileController);
+
+export { userRouter };
+>>>>>>> b131e3cdf4b1fd380b9531f8b44d373937a182be
