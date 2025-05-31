@@ -3,7 +3,6 @@ import type { Next } from 'hono';
 import jwt from 'jsonwebtoken';
 import { getCookie } from 'hono/cookie';
 
-// Extend the Context type to include user
 declare module 'hono' {
   interface ContextVariableMap {
     user: {

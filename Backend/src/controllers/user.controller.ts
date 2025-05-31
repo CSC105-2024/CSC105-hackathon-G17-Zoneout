@@ -106,14 +106,10 @@ export const loginController = async (c: Context) => {
     setCookie(c, 'accessToken', accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'Lax',
-      path: '/',
     });
     setCookie(c, 'refreshToken', refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'Lax',
-      path: '/',
     });
 
     return c.json(createSuccessResponse({
