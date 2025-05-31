@@ -30,7 +30,22 @@ const NavBar = () => {
 
       {/* NAVIGATION LINKS */}
       <div className='flex items-center gap-3'>
-        {isHome && (
+        <Button onClick={() => navigate('/login')} variant='ghost'>
+          <LogIn className='w-5 h-5 mr-2' /> Login
+        </Button>
+        <Button onClick={() => navigate('/signup')} variant='ghost'>
+          <UserPlus className='w-5 h-5 mr-2' /> Sign Up
+        </Button>
+        <Button onClick={() => navigate('/map')} variant='ghost'>
+          <MapPin className='w-5 h-5 mr-2' /> Map
+        </Button>
+        <Button onClick={() => navigate('/safety-privacy')} variant='ghost'>
+          <Shield className='w-5 h-5 mr-2' /> Safety & Privacy
+        </Button>
+        <Button onClick={() => navigate('/profile')} variant='ghost'>
+          <User className='w-5 h-5 mr-2' /> Profile
+        </Button>
+        {/* {isHome && (
           <>
             {!user && (
               <>
@@ -79,7 +94,7 @@ const NavBar = () => {
               </Button>
             )}
           </>
-        )}
+        )} */}
       </div>
     </nav>
   );
