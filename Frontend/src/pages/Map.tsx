@@ -116,7 +116,7 @@ const MapPage = () => {
     <div className='min-h-screen relative overflow-hidden'>
       <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
         <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-          <InteractiveMap posts={posts} />
+          {/* <InteractiveMap posts={posts} /> */}
         </Card>
       </div>
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
