@@ -32,7 +32,7 @@ const NavBar = () => {
     },
     {
       label: 'Safety & Privacy',
-      icon: <Shield className='w-5 h-5 mr-2' />,
+      icon: <Shield className='w-5 h-5 mr-2 text-black' />,
       to: '/safety-privacy',
     },
     // Only show if logged in
@@ -40,19 +40,19 @@ const NavBar = () => {
       ? [
           {
             label: 'Profile',
-            icon: <User className='w-5 h-5 mr-2' />,
+            icon: <User className='w-5 h-5 mr-2 text-black' />,
             to: '/my-profile',
           },
         ]
       : [
           {
             label: 'Login',
-            icon: <LogIn className='w-5 h-5 mr-2' />,
+            icon: <LogIn className='w-5 h-5 mr-2 text-black' />,
             to: '/login',
           },
           {
             label: 'Sign Up',
-            icon: <UserPlus className='w-5 h-5 mr-2' />,
+            icon: <UserPlus className='w-5 h-5 mr-2 text-black' />,
             to: '/signup',
           },
         ]),
@@ -88,17 +88,33 @@ const NavBar = () => {
           {/* Links */}
           <div className='flex-1 overflow-y-auto p-4'>
             <div className='flex flex-col gap-2'>
-              {navLinks.map((link) => (
-                <Button
-                  key={link.label}
-                  onClick={() => handleNav(link.to)}
-                  variant='ghost'
-                  className='justify-start'
-                >
-                  {link.icon}
-                  {link.label}
-                </Button>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = link.label === 'Map';
+                return (
+                  <Button
+                    key={link.label}
+                    onClick={() => handleNav(link.to)}
+                    variant='ghost'
+                    className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start
+                      ${isActive
+                        ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none'
+                        : 'border border-white/60 bg-transparent text-white hover:bg-white/10'}
+                    `}
+                    style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)' : undefined }}
+                  >
+                    {link.icon}
+                    <span
+                      className={
+                        isActive
+                          ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg"
+                          : ""
+                      }
+                    >
+                      {link.label}
+                    </span>
+                  </Button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -129,18 +145,34 @@ const NavBar = () => {
       </div>
 
       {/* Desktop Nav */}
-      <div className='hidden md:flex items-center gap-3 text-purple-800'>
-        {navLinks.map((link) => (
-          <Button
-            key={link.label}
-            onClick={() => navigate(link.to)}
-            variant='ghost'
-            className='rounded-xl hover:bg-[var(--nav-bg-color)]'
-          >
-            {link.icon}
-            {link.label}
-          </Button>
-        ))}
+      <div className="hidden md:flex items-center gap-8 h-14">
+        {navLinks.map((link) => {
+          const isActive = link.label === 'Map';
+          return (
+            <Button
+              key={link.label}
+              onClick={() => navigate(link.to)}
+              variant='ghost'
+              className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all
+                ${isActive
+                  ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-lg border-none'
+                  : 'border border-white/60 bg-transparent text-white hover:bg-white/10'}
+              `}
+              style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)' : undefined }}
+            >
+              {link.icon}
+              <span
+                className={
+                  isActive
+                    ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg"
+                    : ""
+                }
+              >
+                {link.label}
+              </span>
+            </Button>
+          );
+        })}
       </div>
 
       {/* Mobile Hamburger */}

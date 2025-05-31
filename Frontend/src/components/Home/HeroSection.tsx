@@ -15,10 +15,9 @@ function HeroSection({ onExplore }: { onExplore: () => void }) {
         </p>
         <div className='flex flex-col sm:flex-row gap-6 justify-center mb-16'>
           <Button
-            onClick={onExplore}
-            className='bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60'
+            className='bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60'
           >
-            <span className='textcenter flex items-center gap-2'>
+            <span className='flex items-center gap-2'>
               <Sparkles className='inline' />
               Start Exploring!
             </span>
