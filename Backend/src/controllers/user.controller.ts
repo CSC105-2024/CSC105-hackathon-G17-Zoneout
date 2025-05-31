@@ -26,10 +26,11 @@ const createErrorResponse = (message: string): ApiResponse => ({
 });
 
 export const getCurrentUserController = async (c: Context) => {
-  if (!c.user) return c.json(createErrorResponse('Unauthorized'), 401);
+  const cUser = c.get('user');
+  if (!cUser) return c.json(createErrorResponse('Unauthorized'), 401);
   
   const user = await db.user.findUnique({
-    where: { id: c.user.id },
+    where: { id: Number(cUser.id) },
     select: { id: true, name: true, email: true, phone: true },
   });
 
@@ -86,6 +87,7 @@ export const loginController = async (c: Context) => {
       name: existingUser.name ?? '',
     });
     const refreshToken = generateRefreshToken(existingUser.id.toString());
+    console.log("Access Token:", accessToken);
     await db.user.update({
       where: { id: existingUser.id },
       data: {

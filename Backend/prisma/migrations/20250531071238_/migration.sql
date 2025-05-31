@@ -5,8 +5,8 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
-    `accessToken` VARCHAR(191) NULL DEFAULT '',
-    `refreshToken` VARCHAR(191) NULL DEFAULT '',
+    `accessToken` VARCHAR(255) NULL,
+    `refreshToken` VARCHAR(255) NULL DEFAULT '',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 

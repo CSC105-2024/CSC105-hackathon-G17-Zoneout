@@ -2,6 +2,14 @@ import React, { useCallback, useState } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import styled from 'styled-components';
 
+type MarkerType = 'social' | 'activities' | 'study' | 'entertainment';
+
+interface MarkerData {
+  lat: number;
+  lng: number;
+  type: MarkerType;
+}
+
 const containerStyle = {
   width: '100%',
   height: '100vh'
@@ -140,13 +148,34 @@ const ActionButton = styled.button<{ variant: 'create' | 'posts' }>`
   }
 `;
 
-const sampleMarkers = [
-  { lat: 47.6062, lng: -122.3321, type: 'social', icon: '☕' },
-  { lat: 47.6205, lng: -122.3493, type: 'activities', icon: '🏃' },
-  { lat: 47.5951, lng: -122.3326, type: 'study', icon: '📚' },
-  { lat: 47.6097, lng: -122.3331, type: 'entertainment', icon: '🎮' },
-  { lat: 47.6145, lng: -122.3426, type: 'activities', icon: '⚽' }
+const sampleMarkers: MarkerData[] = [
+  { lat: 47.6062, lng: -122.3321, type: 'social' },
+  { lat: 47.6205, lng: -122.3493, type: 'activities' },
+  { lat: 47.5951, lng: -122.3326, type: 'study' },
+  { lat: 47.6097, lng: -122.3331, type: 'entertainment' },
+  { lat: 47.6145, lng: -122.3426, type: 'activities' }
 ];
+
+const createMarkerIcon = (type: MarkerType) => {
+  const svgString = `
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="11" fill="${type === 'social' ? '#ff6b9d' : 
+        type === 'activities' ? '#4ecdc4' : 
+        type === 'study' ? '#ffa726' : 
+        '#ab47bc'}" />
+      ${type === 'social' ? '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="white"/>' :
+        type === 'activities' ? '<path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7" fill="white"/>' :
+        type === 'study' ? '<path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" fill="white"/>' :
+        '<path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="white"/>'}
+    </svg>
+  `;
+
+  return {
+    url: `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`,
+    scaledSize: new google.maps.Size(40, 40),
+    anchor: new google.maps.Point(20, 20)
+  };
+};
 
 const Map: React.FC = () => {
   const { isLoaded } = useJsApiLoader({
@@ -156,6 +185,7 @@ const Map: React.FC = () => {
   });
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
@@ -164,6 +194,38 @@ const Map: React.FC = () => {
   const onUnmount = useCallback(() => {
     setMap(null);
   }, []);
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setCurrentLocation(location);
+          if (map) {
+            map.setCenter(location);
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          // Fallback to default center if geolocation fails
+          if (map) {
+            map.setCenter(center);
+          }
+          setCurrentLocation(null);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+      // Fallback to default center if geolocation is not supported
+      if (map) {
+        map.setCenter(center);
+      }
+      setCurrentLocation(null);
+    }
+  };
 
   const zoomIn = () => {
     if (map) {
@@ -180,9 +242,7 @@ const Map: React.FC = () => {
   };
 
   const centerMap = () => {
-    if (map) {
-      map.setCenter(center);
-    }
+    getCurrentLocation();
   };
 
   const mapOptions: google.maps.MapOptions = {
@@ -236,9 +296,24 @@ const Map: React.FC = () => {
           <Marker
             key={index}
             position={{ lat: marker.lat, lng: marker.lng }}
-            label={marker.icon}
+            icon={createMarkerIcon(marker.type)}
           />
         ))}
+        {currentLocation && (
+          <Marker
+            position={currentLocation}
+            icon={{
+              url: `data:image/svg+xml;utf8,${encodeURIComponent(`
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="11" fill="#4285F4" />
+                  <circle cx="12" cy="12" r="6" fill="white" />
+                </svg>
+              `)}`,
+              scaledSize: new google.maps.Size(40, 40),
+              anchor: new google.maps.Point(20, 20)
+            }}
+          />
+        )}
       </GoogleMap>
       
       <GradientOverlay />
