@@ -5,8 +5,7 @@ import { useLogin } from '@/hooks/use-users';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { mutateAsync: login, isLoading: isLoginLoading, error } = useLogin();
-  navigate('/map');
+  const { mutateAsync: login, isPending: isLoginLoading, error } = useLogin();
 
   const handleLogin = async (data: any) => {
     try {

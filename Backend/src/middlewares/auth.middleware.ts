@@ -1,27 +1,23 @@
 import type { Context } from 'hono';
 import type { Next } from 'hono';
 import jwt from 'jsonwebtoken';
-
-// Extend the Context type to include user
-declare module 'hono' {
-  interface ContextVariableMap {
-    user: {
-      id: string;
-      email: string;
-    };
-  }
-}
+import { getCookie } from 'hono/cookie';
 
 export const authenticateToken = async (c: Context, next: Next) => {
   try {
+    let token: string | undefined;
     const authHeader = c.req.header('Authorization');
-    
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+    if (!token) {
+      token = getCookie(c, 'accessToken');
+    }
+
+    if (!token) {
       return c.json({ error: 'No token provided' }, 401);
     }
 
-    const token = authHeader.split(' ')[1];
-    
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET is not defined');
     }
@@ -43,4 +39,4 @@ export const authenticateToken = async (c: Context, next: Next) => {
     }
     return c.json({ error: 'Authentication failed' }, 401);
   }
-}; 
+};

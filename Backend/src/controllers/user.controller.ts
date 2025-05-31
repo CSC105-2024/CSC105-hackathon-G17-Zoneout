@@ -106,10 +106,14 @@ export const loginController = async (c: Context) => {
     setCookie(c, 'accessToken', accessToken, {
       httpOnly: true,
       secure: isProduction,
+      sameSite: 'Lax',
+      path: '/',
     });
     setCookie(c, 'refreshToken', refreshToken, {
       httpOnly: true,
       secure: isProduction,
+      sameSite: 'Lax',
+      path: '/',
     });
 
     return c.json(createSuccessResponse({
@@ -196,12 +200,14 @@ export const refreshTokenController = async (c: Context) => {
     setCookie(c, 'accessToken', newAccessToken, {
       httpOnly: true,
       secure: isProduction,
+      sameSite: 'Lax',
       path: '/',
     });
 
     setCookie(c, 'refreshToken', newRefreshToken, {
       httpOnly: true,
       secure: isProduction,
+      sameSite: 'Lax',
       path: '/',
     });
 
