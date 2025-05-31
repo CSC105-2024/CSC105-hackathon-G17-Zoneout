@@ -2,8 +2,9 @@ import ProfileInfoCard from '@/components/Profile/ProfileInfoCard';
 import ActivityHistoryCard from '@/components/Profile/ActivityHistoryCard';
 import { Button } from '@/components/ui/button';
 import { useLogout, useUpdateProfile, useCurrentUser } from '@/hooks/use-users';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { getUserPosts } from '@/api/post';
 
 const MyProfile = () => {
   const { data: user, isLoading, error } = useCurrentUser();
@@ -12,13 +13,24 @@ const MyProfile = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // Fetch user's posts for activity history
+  const userId = user?.data?.id;
+  const { data: postsData, isLoading: isPostsLoading } = useQuery({
+    queryKey: ['userPosts', userId],
+    queryFn: () => getUserPosts(userId),
+    enabled: !!userId,
+  });
+
   const handleUpdateProfile = async (data: { name: string; phone: string }) => {
     await updateProfile(data);
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    queryClient.invalidateQueries({ queryKey: ['userPosts', userId] });
   };
 
   if (isLoading) return <div>Loading...</div>;
   if (error || !user?.data) return <div>Error: Failed to fetch user data</div>;
+
+  console.log('post dat', postsData);
 
   return (
     <div
@@ -35,7 +47,9 @@ const MyProfile = () => {
             editable
             onUpdateProfile={handleUpdateProfile}
           />
-          <ActivityHistoryCard history={[]} />
+          <ActivityHistoryCard
+            history={isPostsLoading ? [] : postsData?.data || []}
+          />
           <Button
             className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
             onClick={async () => {
