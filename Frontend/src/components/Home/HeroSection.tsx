@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 
 function HeroSection({ onExplore }: { onExplore: () => void }) {
   return (
-    <SectionCard className='py-16 text-center'>
+    <SectionCard className='py-20 text-center'>
       <div className='max-w-4xl mx-auto'>
         <h2 className='text-6xl font-black text-white mb-6 drop-shadow-lg transform hover:scale-105 transition-transform duration-300'>
           Connect with Amazing People Near You!
@@ -13,10 +13,8 @@ function HeroSection({ onExplore }: { onExplore: () => void }) {
           Join the most fun and friendly community platform where making friends
           is an adventure!
         </p>
-        <div className='flex flex-col sm:flex-row gap-6 justify-center mb-16'>
-          <Button
-            className='bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60'
-          >
+        <div className='flex flex-col sm:flex-row gap-6 justify-center '>
+          <Button className='bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 '>
             <span className='flex items-center gap-2'>
               <Sparkles className='inline' />
               Start Exploring!

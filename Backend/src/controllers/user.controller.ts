@@ -233,6 +233,8 @@ export const logoutController = async (c: Context) => {
 export const refreshTokenController = async (c: Context) => {
   try {
     const refreshToken = getCookie(c, 'refreshToken');
+    console.log('refreshToken from cookie:', refreshToken);
+
     if (!refreshToken) return c.json({ error: 'No refresh token' }, 401);
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);

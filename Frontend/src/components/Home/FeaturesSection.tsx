@@ -32,7 +32,7 @@ function FeaturesSection() {
     <SectionCard>
       <div className='max-w-6xl mx-auto'>
         <h3 className='text-4xl font-black text-white text-center mb-12 drop-shadow-lg'>
-          Why You'll Love ConnectMap!
+          Why You'll Love Zoneout!
         </h3>
         <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8'>
           {features.map((feature, idx) => (
