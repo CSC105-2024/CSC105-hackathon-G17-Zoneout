@@ -15,17 +15,15 @@ const samplePost = {
     "Let's study together for the upcoming calculus exam! Meet at the library at 5pm.",
 };
 
-<<<<<<< HEAD
-=======
 const mapContainerStyle = {
   width: '100%',
   height: '100%',
-  minHeight: '500px'
+  minHeight: '500px',
 };
 
 const defaultCenter = {
   lat: 0,
-  lng: 0
+  lng: 0,
 };
 
 function MapCard() {
@@ -36,7 +34,7 @@ function MapCard() {
       (pos) => {
         setPosition({
           lat: pos.coords.latitude,
-          lng: pos.coords.longitude
+          lng: pos.coords.longitude,
         });
       },
       (err) => {
@@ -49,7 +47,7 @@ function MapCard() {
     <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
       <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
         <div className='w-full h-full relative z-0'>
-          <LoadScript googleMapsApiKey="AIzaSyAQmuJNjF54qXWO6uNMEKcU0qgo7AOPicA">
+          <LoadScript googleMapsApiKey='AIzaSyAQmuJNjF54qXWO6uNMEKcU0qgo7AOPicA'>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={position}
@@ -57,19 +55,19 @@ function MapCard() {
               options={{
                 styles: [
                   {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                  }
+                    featureType: 'poi',
+                    elementType: 'labels',
+                    stylers: [{ visibility: 'off' }],
+                  },
                 ],
                 disableDefaultUI: false,
                 zoomControl: true,
                 streetViewControl: true,
                 mapTypeControl: true,
-                fullscreenControl: true
+                fullscreenControl: true,
               }}
             >
-              <Marker 
+              <Marker
                 position={position}
                 animation={google.maps.Animation.DROP}
               />
@@ -81,7 +79,6 @@ function MapCard() {
   );
 }
 
->>>>>>> b131e3cdf4b1fd380b9531f8b44d373937a182be
 function CreatePostButton({ onClick }: { onClick: () => void }) {
   return (
     <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50'>
@@ -111,13 +108,9 @@ function PostsNearbyCounter({ count = 5 }: { count?: number }) {
 const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
-<<<<<<< HEAD
-  // const navigate = useNavigate();
-  const [selectedPost, setSelectedPost] = useState(samplePost);
-  const [posts, setPosts] = useState<any[]>([]);
-=======
-  const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(samplePost);
->>>>>>> b131e3cdf4b1fd380b9531f8b44d373937a182be
+  const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(
+    samplePost
+  );
 
   return (
     <div className='min-h-screen relative overflow-hidden'>
@@ -127,27 +120,13 @@ const MapPage = () => {
         </Card>
       </div>
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
-<<<<<<< HEAD
-      <PostsNearbyCounter count={posts.length} />
-      <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
-      <CreatePostModal open={showCreatePost} onOpenChange={setShowCreatePost} onCreatePost={post => setPosts(prev => [...prev, post])} />
-      <PostModal
-        open={!!selectedPost}
-        post={selectedPost}
-        onClose={() => setSelectedPost(null)}
-        onViewProfile={() => {
-          // test: alert or console.log
-          alert('View Profile clicked!');
-        }}
-        onJoin={() => {
-          alert('Join clicked!');
-        }}
-      />
-=======
       <PostsNearbyCounter count={5} />
-      <div className="z-50">
+      <div className='z-50'>
         <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
-        <CreatePostModal open={showCreatePost} onOpenChange={setShowCreatePost} />
+        <CreatePostModal
+          open={showCreatePost}
+          onOpenChange={setShowCreatePost}
+        />
         <PostModal
           open={!!selectedPost}
           post={selectedPost}
@@ -160,7 +139,6 @@ const MapPage = () => {
           }}
         />
       </div>
->>>>>>> b131e3cdf4b1fd380b9531f8b44d373937a182be
     </div>
   );
 };

@@ -18,11 +18,8 @@
     "@tailwindcss/vite": "^4.1.8",
     "@tanstack/react-query": "^5.79.0",
     "@tanstack/react-query-devtools": "^5.79.0",
-<<<<<<< HEAD
     "axios": "^1.9.0",
-=======
     "@types/leaflet": "^1.9.18",
->>>>>>> b131e3cdf4b1fd380b9531f8b44d373937a182be
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
