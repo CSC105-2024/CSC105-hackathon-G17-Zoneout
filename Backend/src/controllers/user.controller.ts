@@ -86,6 +86,13 @@ export const loginController = async (c: Context) => {
       name: existingUser.name ?? '',
     });
     const refreshToken = generateRefreshToken(existingUser.id.toString());
+    await db.user.update({
+      where: { id: existingUser.id },
+      data: {
+        accessToken: { set: accessToken.toString() },
+        refreshToken: { set: refreshToken },
+      },
+    });
 
     const userResponse: UserResponse = {
       id: existingUser.id,
@@ -169,6 +176,15 @@ export const refreshTokenController = async (c: Context) => {
     });
 
     const newRefreshToken = generateRefreshToken(user.id.toString());
+
+    // Save new tokens to database
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        accessToken: { set: newAccessToken },
+        refreshToken: { set: newRefreshToken },
+      },
+    });
 
     const isProduction = process.env.NODE_ENV === 'production';
 
