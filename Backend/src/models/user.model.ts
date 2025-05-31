@@ -125,7 +125,8 @@ export const getUserPosts = async (userId: string) => {
 export const updateUser = async (
   userId: string,
   name?: string,
-  phone?: string
+  phone?: string,
+  profileEmoji?: string
 ) => {
   try {
     const updatedUser = await db.user.update({
@@ -133,6 +134,7 @@ export const updateUser = async (
       data: {
         ...(name && { name }),
         ...(phone && { phone }),
+        ...(profileEmoji && { profileEmoji }),
       },
     });
     return {

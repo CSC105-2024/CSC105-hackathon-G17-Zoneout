@@ -5,8 +5,8 @@ import { createRoot } from 'react-dom/client';
 import { getPosts } from '@/api/post';
 import { toast } from 'sonner';
 import PostModal from './PostModal';
+import { Axios } from '@/../axiosInstance';
 
-// Helper function to convert React icon to SVG string
 const iconToSVG = (IconComponent: any): Promise<string> => {
   return new Promise((resolve) => {
     // Create a temporary div
@@ -26,20 +26,15 @@ const iconToSVG = (IconComponent: any): Promise<string> => {
         fill='none'
       />
     );
-
-    // Give React time to render, then extract the SVG
     setTimeout(() => {
       const svgElement = tempDiv.querySelector('svg');
       if (svgElement) {
-        // Get the inner content (paths, circles, etc.) without the svg wrapper
+
         const innerHTML = svgElement.innerHTML;
         resolve(innerHTML);
       } else {
-        // Fallback
         resolve('<circle cx="12" cy="12" r="8" />');
       }
-
-      // Cleanup
       root.unmount();
       document.body.removeChild(tempDiv);
     }, 10);
@@ -54,10 +49,11 @@ const iconMap: { [key: string]: any } = {
 };
 
 type Post = {
+  id: number;
   title: string;
   category: string;
   description: string;
-  location: string; // 'lat, lng'
+  location: string;
   icon: string;
   user?: {
     name: string;
@@ -89,8 +85,9 @@ const calculateDistance = (
 const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
 type InteractiveMapProps = {
   onMarkerClick?: (post: Post) => void;
+  refreshTrigger?: number;
 };
-const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
+const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
     libraries: ['places', 'geometry']
@@ -108,19 +105,21 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch all posts when component mounts
+  // Fetch all posts when component mounts or refreshTrigger changes
   useEffect(() => {
     const fetchAllPosts = async () => {
+      setLoading(true); // Set loading to true before fetching
       try {
         const response = await getPosts();
         if (response.success) {
           // Transform backend post format to frontend format
           const transformedPosts = response.data.map((post: any) => ({
+            id: post.id,
             title: post.content.split('\n')[0], // First line as title
             description: post.content,
             category: post.category,
             location: `${post.latitude}, ${post.longitude}`,
-            icon: 'Coffee', // Default icon, you can map categories to icons
+            icon: 'Coffee',
             user: post.user
               ? {
                   name: post.user.name,
@@ -130,6 +129,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
               : undefined,
           }));
           setAllPosts(transformedPosts);
+          console.log('Posts updated:', transformedPosts); // Debug log
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -140,9 +140,9 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
     };
 
     fetchAllPosts();
-  }, []);
+  }, [refreshTrigger]); // Add refreshTrigger as a dependency
 
-  // Update nearby posts when user location changes
+  // Update nearby posts when user location or allPosts changes
   useEffect(() => {
     if (userLocation && allPosts.length > 0) {
       const nearby = allPosts.filter((post) => {
@@ -156,8 +156,14 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
         return distance <= NEARBY_RADIUS_KM;
       });
       setNearbyPosts(nearby);
+      console.log('Nearby posts updated:', nearby); // Debug log
     }
   }, [userLocation, allPosts]);
+
+  // Force a re-render when refreshTrigger changes
+  useEffect(() => {
+    console.log('Refresh trigger changed:', refreshTrigger); // Debug log
+  }, [refreshTrigger]);
 
   // Pre-generate SVG strings for all icons
   useEffect(() => {
@@ -217,8 +223,24 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   };
 
   const handleJoin = () => {
-    // TODO: Implement join functionality
+
     console.log('Join activity:', selectedPost?.title);
+  };
+
+  const handleDelete = async (postId: number) => {
+    try {
+      const response = await Axios.delete(`/api/posts/delete-post/${postId}`);
+      if (response.data.success) {
+        setAllPosts((prev) => prev.filter((post) => post.id !== postId));
+        toast.success('Post deleted successfully!');
+        setIsModalOpen(false);
+      } else {
+        toast.error(response.data.msg || 'Failed to delete post');
+      }
+    } catch (error) {
+      toast.error(`This is ${selectedPost?.user?.name}'s post.`);
+      console.error(error);
+    }
   };
 
   if (!isLoaded || loading) {
@@ -306,6 +328,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
         post={selectedPost}
         onViewProfile={handleViewProfile}
         onJoin={handleJoin}
+        onDelete={selectedPost ? () => handleDelete(Number(selectedPost.id)) : undefined}
       />
 
       {/* Nearby posts counter */}

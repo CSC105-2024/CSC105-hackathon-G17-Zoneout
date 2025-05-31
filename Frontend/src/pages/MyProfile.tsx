@@ -21,8 +21,8 @@ const MyProfile = () => {
     enabled: !!userId,
   });
 
-  const handleUpdateProfile = async (data: { name: string; phone: string }) => {
-    await updateProfile(data);
+  const handleUpdateProfile = async (data: { name: string; phone: string; profileEmoji: string }) => {
+    await updateProfile({ ...data, userId: user.data.id });
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     queryClient.invalidateQueries({ queryKey: ['userPosts', userId] });
   };

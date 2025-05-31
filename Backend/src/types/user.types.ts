@@ -6,14 +6,15 @@ export type Context = HonoContext & {
   };
 };
 
-export type CreateUserBody {
+export type CreateUserBody = {
   email: string;
   name: string;
   password: string;
   phone: string;
+  profileEmoji?: string;
 }
 
-export type UserResponse {
+export type UserResponse = {
   id: number;
   email: string;
   name: string | null;

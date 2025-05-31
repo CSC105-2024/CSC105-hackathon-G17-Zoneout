@@ -256,7 +256,7 @@ useEffect(() => {
       setUser(response.data.data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch user data');
+      setError('This Post is belong to others.');
       console.error('Error fetching user:', err);
     } finally {
       setLoading(false);

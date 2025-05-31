@@ -130,7 +130,7 @@ const NavBar = () => {
 
   return (
     <nav
-      className='w-full flex items-center justify-between p-6 border-b-4 border-white/30 shadow-lg backdrop-blur-md'
+      className='w-full flex items-center justify-between p-6 border-b-4 border-white/15 shadow-md backdrop-blur-md'
       style={{ background: 'var(--nav-bg-color)' }}
     >
       {/* LOGO */}
