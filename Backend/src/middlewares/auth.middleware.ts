@@ -3,7 +3,6 @@ import type { Next } from 'hono';
 import jwt from 'jsonwebtoken';
 import { getCookie } from 'hono/cookie';
 
-<<<<<<< HEAD
 // Extend the Context type to include user
 declare module 'hono' {
   interface ContextVariableMap {
@@ -18,11 +17,6 @@ export const authenticateToken = async (c: Context, next: Next) => {
     let token: string | undefined;
 
     // 1. Try Authorization header
-=======
-export const authenticateToken = async (c: Context, next: Next) => {
-  try {
-    let token: string | undefined;
->>>>>>> a10feb000f6ef833a27ebf65b9546462449dca49
     const authHeader = c.req.header('Authorization');
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
