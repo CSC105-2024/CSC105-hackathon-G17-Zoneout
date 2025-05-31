@@ -1,16 +1,23 @@
 import AuthLayout from '@/components/Form/AuthLayout';
 import LoginForm from '@/components/Auth/LoginForm';
 import { useNavigate } from 'react-router-dom';
+import { useLogin } from '@/hooks/use-users';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { mutateAsync: login, isLoading: isLoginLoading, error } = useLogin();
+  navigate('/map');
 
   const handleLogin = async (data: any) => {
-    const {mutateAsync: login,
-      isLoading: isLoginLoading, 
-      error
-    } = useLogin(); 
-    navigate('/map');
+    try {
+      await login(data);
+      // If login is successful, redirect to the map page
+      navigate('/map');
+    } catch (err) {
+      console.error('Login failed:', err);
+      // Handle error (e.g., show a notification)
+      alert('Login failed. Please try again.');
+    }
   };
 
   return (
