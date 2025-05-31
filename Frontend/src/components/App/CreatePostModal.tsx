@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { MapPin, X, Coffee, Gamepad, Book, Dumbbell } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import { createPost } from '@/api/post';
 
 const categories = ['Study Group', 'Food', 'Event', 'Lost & Found', 'Other'];
 
@@ -110,9 +111,14 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      await onCreatePost(form);
-      onOpenChange(false);
-      toast.success('Post created successfully!');
+      const response = await createPost(form);
+      if (response.success) {
+        await onCreatePost(form);
+        onOpenChange(false);
+        toast.success('Post created successfully!');
+      } else {
+        toast.error(response.msg || 'Failed to create post');
+      }
     } catch (error) {
       console.error('Error creating post:', error);
       toast.error('Failed to create post. Please try again.');
@@ -304,6 +310,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                 background: 'var(--color-accent-primary)',
                 color: '#fff',
               }}
+              
             >
               {isSubmitting ? 'Creating...' : 'Create'}
             </Button>

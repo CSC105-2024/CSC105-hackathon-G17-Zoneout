@@ -6,6 +6,7 @@ const postRouter = new Hono();
 
 postRouter.use('/*', authenticateToken);
 
+postRouter.get('/', postController.getAllPosts);
 postRouter.post('/create-post', postController.createPost);
 postRouter.get('/user/:userId', postController.getPostsByUser);
 postRouter.put('/edit-post/:postId', postController.editPost);
