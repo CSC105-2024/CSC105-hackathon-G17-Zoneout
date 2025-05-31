@@ -45,7 +45,7 @@ const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   // const navigate = useNavigate();
-  const [selectedPost, setSelectedPost] = useState(samplePost);
+  const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(samplePost);
   const [posts, setPosts] = useState<any[]>([]);
 
   return (
