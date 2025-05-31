@@ -79,8 +79,10 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 };
 
 const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
-
-const InteractiveMap = () => {
+type InteractiveMapProps = {
+  onMarkerClick?: (post: Post) => void;
+};
+const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
   });
@@ -229,7 +231,9 @@ const InteractiveMap = () => {
           function handleMarkerClick(post: Post): ((e: google.maps.MapMouseEvent) => void) | undefined {
             return (e: google.maps.MapMouseEvent) => {
               e.stop();
-              console.log(post);
+              if (onMarkerClick) {
+                onMarkerClick(post);
+              }
             };
           }
           return (
