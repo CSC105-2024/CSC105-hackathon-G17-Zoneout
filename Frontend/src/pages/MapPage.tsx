@@ -6,7 +6,7 @@ import InteractiveMap from '@/components/App/InteractiveMap';
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
-import { postApi, CreatePostData } from '@/services/post';
+import { createPost, getPosts, CreatePostData } from '@/api/post';
 import { toast } from 'sonner';
 
 const samplePost = {
@@ -55,7 +55,7 @@ const MapPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await postApi.getPosts();
+        const response = await getPosts();
         if (response.success) {
           // Transform backend post format to frontend format
           const transformedPosts = response.data.map((post: any) => ({
@@ -64,6 +64,11 @@ const MapPage = () => {
             category: post.category,
             location: `${post.latitude}, ${post.longitude}`,
             icon: 'Coffee', // Default icon, you can map categories to icons
+            user: post.user ? {
+              name: post.user.name,
+              email: post.user.email,
+              phone: post.user.phone,
+            } : undefined,
           }));
           setPosts(transformedPosts);
         }
@@ -80,7 +85,7 @@ const MapPage = () => {
 
   const handleCreatePost = async (postData: CreatePostData) => {
     try {
-      const response = await postApi.createPost(postData);
+      const response = await createPost(postData);
       if (response.success) {
         // Add the new post to the list
         setPosts((prev) => [...prev, {
@@ -102,7 +107,7 @@ const MapPage = () => {
     <div className='min-h-screen relative overflow-hidden'>
       <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
         <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-          <InteractiveMap posts={posts} />
+          <InteractiveMap posts={posts} onMarkerClick={(post) => setSelectedPost(post)} />
         </Card>
       </div>
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
