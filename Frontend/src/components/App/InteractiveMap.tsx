@@ -19,11 +19,11 @@ const iconToSVG = (IconComponent: any): Promise<string> => {
     // Create a root and render the icon
     const root = createRoot(tempDiv);
     root.render(
-      <IconComponent 
-        size={24} 
-        strokeWidth={2} 
-        stroke="currentColor" 
-        fill="none"
+      <IconComponent
+        size={24}
+        strokeWidth={2}
+        stroke='currentColor'
+        fill='none'
       />
     );
 
@@ -38,7 +38,7 @@ const iconToSVG = (IconComponent: any): Promise<string> => {
         // Fallback
         resolve('<circle cx="12" cy="12" r="8" />');
       }
-      
+
       // Cleanup
       root.unmount();
       document.body.removeChild(tempDiv);
@@ -66,36 +66,38 @@ type Post = {
   };
 };
 
-interface InteractiveMapProps {
-  onMarkerClick?: (post: Post) => void;
-}
-
 // Helper function to calculate distance between two points in kilometers
-const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+const calculateDistance = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number => {
   const R = 6371; // Earth's radius in kilometers
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
 
 const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
-<<<<<<< HEAD
-
-=======
 type InteractiveMapProps = {
   onMarkerClick?: (post: Post) => void;
 };
->>>>>>> eb2b59addc6dab1f9c4b833160435fbe7819e601
 const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
   });
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [zoom, setZoom] = useState(15);
   const mapRef = useRef<google.maps.Map | null>(null);
   const [iconSVGs, setIconSVGs] = useState<{ [key: string]: string }>({});
@@ -118,11 +120,13 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
             category: post.category,
             location: `${post.latitude}, ${post.longitude}`,
             icon: 'Coffee', // Default icon, you can map categories to icons
-            user: post.user ? {
-              name: post.user.name,
-              email: post.user.email,
-              phone: post.user.phone,
-            } : undefined,
+            user: post.user
+              ? {
+                  name: post.user.name,
+                  email: post.user.email,
+                  phone: post.user.phone,
+                }
+              : undefined,
           }));
           setAllPosts(transformedPosts);
         }
@@ -140,7 +144,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   // Update nearby posts when user location changes
   useEffect(() => {
     if (userLocation && allPosts.length > 0) {
-      const nearby = allPosts.filter(post => {
+      const nearby = allPosts.filter((post) => {
         const [postLat, postLng] = post.location.split(',').map(Number);
         const distance = calculateDistance(
           userLocation.lat,
@@ -158,7 +162,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   useEffect(() => {
     const generateIconSVGs = async () => {
       const svgs: { [key: string]: string } = {};
-      
+
       for (const [key, IconComponent] of Object.entries(iconMap)) {
         try {
           svgs[key] = await iconToSVG(IconComponent);
@@ -167,7 +171,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
           svgs[key] = '<circle cx="12" cy="12" r="8" />'; // Fallback
         }
       }
-      
+
       setIconSVGs(svgs);
     };
 
@@ -180,7 +184,11 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   useEffect(() => {
     if (navigator.geolocation) {
       const watchId = navigator.geolocation.watchPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (pos) =>
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          }),
         (err) => console.error(err)
       );
       return () => navigator.geolocation.clearWatch(watchId);
@@ -232,7 +240,9 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
         center={userLocation || { lat: 1.3521, lng: 103.8198 }}
         zoom={zoom}
         mapContainerClassName='w-full h-full rounded-2xl'
-        onLoad={map => { mapRef.current = map; }}
+        onLoad={(map) => {
+          mapRef.current = map;
+        }}
         options={{ disableDefaultUI: true, zoomControl: false }}
       >
         {/* User location marker */}
@@ -240,7 +250,9 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
           <Marker
             position={userLocation}
             icon={{
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              url:
+                'data:image/svg+xml;charset=UTF-8,' +
+                encodeURIComponent(`
                 <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="15" cy="15" r="12" fill="#4285f4" stroke="#ffffff" stroke-width="3"/>
                   <circle cx="15" cy="15" r="4" fill="#ffffff"/>
@@ -251,15 +263,18 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
             }}
           />
         )}
-        
+
         {/* Nearby post markers */}
         {nearbyPosts.map((post, idx) => {
           const pos = parseLatLng(post.location);
-          const iconContent = iconSVGs[post.icon] || iconSVGs.Coffee || '<circle cx="12" cy="12" r="8" />';
-          
-<<<<<<< HEAD
-=======
-          function handleMarkerClick(post: Post): ((e: google.maps.MapMouseEvent) => void) | undefined {
+          const iconContent =
+            iconSVGs[post.icon] ||
+            iconSVGs.Coffee ||
+            '<circle cx="12" cy="12" r="8" />';
+
+          function handleMarkerClick(
+            post: Post
+          ): ((e: google.maps.MapMouseEvent) => void) | undefined {
             return (e: google.maps.MapMouseEvent) => {
               e.stop();
               if (onMarkerClick) {
@@ -267,14 +282,15 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
               }
             };
           }
->>>>>>> eb2b59addc6dab1f9c4b833160435fbe7819e601
           return (
             <Marker
               onClick={() => handleMarkerClick(post)}
               key={idx}
               position={pos}
               icon={{
-                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                url:
+                  'data:image/svg+xml;charset=UTF-8,' +
+                  encodeURIComponent(`
                   <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="24" cy="24" r="22" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
                     <g transform="translate(12,12)">
@@ -291,7 +307,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
           );
         })}
       </GoogleMap>
-      
+
       {/* Post Modal */}
       <PostModal
         open={isModalOpen}
@@ -300,23 +316,23 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
         onViewProfile={handleViewProfile}
         onJoin={handleJoin}
       />
-      
+
       {/* Nearby posts counter */}
       <div className='absolute top-4 left-4 bg-white/80 px-4 py-2 rounded-full shadow-md'>
         <span className='font-medium'>{nearbyPosts.length} posts nearby</span>
       </div>
-      
+
       {/* Zoom and locate controls */}
       <div className='absolute top-4 right-4 flex flex-col gap-2 z-10'>
         <button
           className='w-10 h-10 rounded-full bg-white/80 text-2xl font-bold shadow hover:bg-white transition'
-          onClick={() => setZoom(z => Math.min(z + 1, 21))}
+          onClick={() => setZoom((z) => Math.min(z + 1, 21))}
         >
           +
         </button>
         <button
           className='w-10 h-10 rounded-full bg-white/80 text-2xl font-bold shadow hover:bg-white transition'
-          onClick={() => setZoom(z => Math.max(z - 1, 1))}
+          onClick={() => setZoom((z) => Math.max(z - 1, 1))}
         >
           -
         </button>

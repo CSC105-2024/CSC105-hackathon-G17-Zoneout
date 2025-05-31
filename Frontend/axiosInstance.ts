@@ -49,7 +49,10 @@ Axios.interceptors.response.use(
         );
         return Axios(originalRequest);
       } catch (refreshError) {
-        if (window.location.pathname !== '/login') {
+        if (
+          window.location.pathname !== '/login' &&
+          window.location.pathname !== '/signup'
+        ) {
           window.location.href = '/login';
         }
         return Promise.reject(refreshError);

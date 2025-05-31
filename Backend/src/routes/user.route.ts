@@ -7,6 +7,7 @@ const userRouter = new Hono();
 userRouter.post('/signup', userController.registerController);
 userRouter.post('/login', userController.loginController);
 userRouter.post('/logout', userController.logoutController);
+userRouter.post('/refresh-token', userController.refreshTokenController);
 
 userRouter.get(
   '/current',

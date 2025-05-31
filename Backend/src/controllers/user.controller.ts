@@ -15,7 +15,7 @@ import {
   updateUser,
   getUserPosts,
 } from '../models/user.model.ts';
-import { setCookie, deleteCookie } from 'hono/cookie';
+import { setCookie, deleteCookie, getCookie } from 'hono/cookie';
 import jwt from 'jsonwebtoken';
 
 const createSuccessResponse = <T>(
@@ -161,72 +161,100 @@ export const logoutController = async (c: Context) => {
   }
 };
 
+// export const refreshTokenController = async (c: Context) => {
+//   try {
+//     const cookies = c.req.header('Cookie') || '';
+//     const refreshToken = cookies
+//       .split('; ')
+//       .find((row: string) => row.startsWith('refreshToken='))
+//       ?.split('=')[1];
+
+//     if (!refreshToken) {
+//       return c.json(createErrorResponse('Refresh token not found'), 401);
+//     }
+
+//     const decoded = jwt.verify(
+//       refreshToken,
+//       process.env.REFRESH_TOKEN_SECRET_KEY!
+//     ) as { id: string };
+
+//     if (!decoded?.id) {
+//       return c.json(createErrorResponse('Invalid refresh token'), 401);
+//     }
+
+//     const user = await db.user.findUnique({
+//       where: { id: Number(decoded.id) },
+//     });
+
+//     if (!user) {
+//       return c.json(createErrorResponse('User not found'), 404);
+//     }
+
+//     const newAccessToken = generateToken({
+//       id: user.id.toString(),
+//       email: user.email,
+//       name: user.name ?? '',
+//     });
+
+//     const newRefreshToken = generateRefreshToken(user.id.toString());
+
+//     // Save new tokens to database
+//     await db.user.update({
+//       where: { id: user.id },
+//       data: {
+//         accessToken: newAccessToken,
+//         refreshToken: newRefreshToken,
+//       },
+//     });
+
+//     const isProduction = process.env.NODE_ENV === 'production';
+
+//     setCookie(c, 'accessToken', newAccessToken, {
+//       httpOnly: true,
+//       secure: isProduction,
+//       sameSite: 'Lax',
+//       path: '/',
+//     });
+
+//     setCookie(c, 'refreshToken', newRefreshToken, {
+//       httpOnly: true,
+//       secure: isProduction,
+//       sameSite: 'Lax',
+//       path: '/',
+//     });
+
+//     return c.json(createSuccessResponse(null, 'Token refreshed successfully'));
+//   } catch (error) {
+//     console.error('Refresh token error:', error);
+//     return c.json(createErrorResponse('Invalid or expired refresh token'), 401);
+//   }
+// };
+
 export const refreshTokenController = async (c: Context) => {
   try {
-    const cookies = c.req.header('Cookie') || '';
-    const refreshToken = cookies
-      .split('; ')
-      .find((row: string) => row.startsWith('refreshToken='))
-      ?.split('=')[1];
+    const refreshToken = getCookie(c, 'refreshToken');
+    if (!refreshToken) return c.json({ error: 'No refresh token' }, 401);
 
-    if (!refreshToken) {
-      return c.json(createErrorResponse('Refresh token not found'), 401);
-    }
-
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET_KEY!
-    ) as { id: string };
-
-    if (!decoded?.id) {
-      return c.json(createErrorResponse('Invalid refresh token'), 401);
-    }
-
-    const user = await db.user.findUnique({
-      where: { id: Number(decoded.id) },
-    });
-
-    if (!user) {
-      return c.json(createErrorResponse('User not found'), 404);
-    }
-
-    const newAccessToken = generateToken({
-      id: user.id.toString(),
-      email: user.email,
-      name: user.name ?? '',
-    });
-
-    const newRefreshToken = generateRefreshToken(user.id.toString());
-
-    // Save new tokens to database
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      },
-    });
-
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    setCookie(c, 'accessToken', newAccessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'Lax',
-      path: '/',
-    });
-
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    // Generate new tokens
+    const newAccessToken = jwt.sign(
+      { id: decoded.id, email: decoded.email, name: decoded.name },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+    const newRefreshToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    setCookie(c, 'accessToken', newAccessToken, { httpOnly: true, path: '/' });
     setCookie(c, 'refreshToken', newRefreshToken, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: 'Lax',
       path: '/',
     });
-
-    return c.json(createSuccessResponse(null, 'Token refreshed successfully'));
-  } catch (error) {
-    console.error('Refresh token error:', error);
-    return c.json(createErrorResponse('Invalid or expired refresh token'), 401);
+    return c.json({ success: true });
+  } catch (e) {
+    return c.json({ error: 'Invalid or expired refresh token' }, 401);
   }
 };
 

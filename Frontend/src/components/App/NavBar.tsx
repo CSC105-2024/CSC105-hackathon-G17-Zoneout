@@ -22,10 +22,14 @@ const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Home', icon: 
-      <Home className='w-5 h-5' />
-    , to: '/' },
-    { label: 'Map', icon: <MapPin className='w-5 h-5 mr-2 rounded-full border-solid border-2 border-white-800' />, to: '/map' },
+    { label: 'Home', icon: <Home className='w-5 h-5' />, to: '/' },
+    {
+      label: 'Map',
+      icon: (
+        <MapPin className='w-5 h-5 mr-2 rounded-full border-solid border-2 border-white-800' />
+      ),
+      to: '/map',
+    },
     {
       label: 'Safety & Privacy',
       icon: <Shield className='w-5 h-5 mr-2' />,
@@ -108,9 +112,16 @@ const NavBar = () => {
       style={{ background: 'var(--nav-bg-color)' }}
     >
       {/* LOGO */}
-      <div className='flex items-center gap-3' onClick={() => navigate('/')}>
+      <div
+        className='flex items-center gap-3 cursor-pointer'
+        onClick={() => navigate('/')}
+      >
         <div className='w-14 h-14 rounded-full flex items-center justify-center shadow-lg overflow-hidden'>
-          <img src={logo} alt="Zoneout Logo" className='w-full h-full object-cover' />
+          <img
+            src={logo}
+            alt='Zoneout Logo'
+            className='w-full h-full object-cover'
+          />
         </div>
         <h1 className='text-4xl font-black text-white drop-shadow-lg -skew-x-6 bg-gradient-to-r from-pink-600 to-purple-700 bg-clip-text text-transparent'>
           ZONEOUT
