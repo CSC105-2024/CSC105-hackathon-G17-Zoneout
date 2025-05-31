@@ -9,7 +9,13 @@ dotenv.config();
 const app = new Hono();
 export const db = new PrismaClient();
 
-app.use('/*', cors());
+app.use(
+  '/*',
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // Connect to database and start server
 async function startServer() {
@@ -17,12 +23,15 @@ async function startServer() {
     await db.$connect();
     console.log('Connected to the database');
 
-    serve({
-      fetch: app.fetch,
-      port: 3000,
-    }, (info) => {
-      console.log(`Server is running on port ${info.port}`);
-    });
+    serve(
+      {
+        fetch: app.fetch,
+        port: 3000,
+      },
+      (info) => {
+        console.log(`Server is running on port ${info.port}`);
+      }
+    );
   } catch (error) {
     console.error('Failed to connect to the database:', error);
     process.exit(1);

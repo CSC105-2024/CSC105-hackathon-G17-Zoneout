@@ -6,7 +6,7 @@ import FormInput from '../Form/FormInput';
 const signupSchema = z
   .object({
     email: z.string().email('❌ Invalid Email Format'),
-    username: z.string().min(3, '❌ Username must be at least 3 characters'),
+    name: z.string().min(3, '❌ Name must be at least 3 characters'),
     password: z
       .string()
       .min(8, '❌ Password must be at least 8 characters')
@@ -55,11 +55,11 @@ const SignupForm = ({
         {...register('email')}
       />
       <FormInput
-        label='Username'
+        label='Name'
         type='text'
-        placeholder='Enter your username'
-        error={errors.username?.message}
-        {...register('username')}
+        placeholder='Enter your name (or username)'
+        error={errors.name?.message}
+        {...register('name')}
       />
       <FormInput
         label='Password'
