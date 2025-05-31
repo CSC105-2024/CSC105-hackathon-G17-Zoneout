@@ -2,16 +2,19 @@ import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-<<<<<<< HEAD
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-=======
 import InteractiveMap from '@/components/App/InteractiveMap';
->>>>>>> c50d7ea6f91101cba7c52a9a0d6689e2f44f4fb2
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
 
-const samplePost = {
+interface Post {
+  title: string;
+  author: string;
+  description: string;
+}
+
+const samplePost: Post = {
   title: 'Study Group: Calculus',
   author: 'Alice',
   description:
@@ -30,7 +33,7 @@ const defaultCenter = {
 };
 
 function MapCard() {
-  const [position, setPosition] = useState(defaultCenter);
+  const [position, setPosition] = useState<google.maps.LatLngLiteral>(defaultCenter);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -101,9 +104,10 @@ function PostsNearbyCounter({ count = 5 }: { count?: number }) {
     <div className='fixed bottom-8 right-8 z-50'>
       <Card className='bg-gradient-to-r from-yellow-300 to-orange-400 backdrop-blur-sm border-4 border-white/60 px-6 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200'>
         <span className='text-white font-black text-lg drop-shadow-md'>
-          🎯 {count} POSTS NEARBY!
+          🎯 {count} POSTS NEARBY!  
         </span>
       </Card>
+      {/* </Card> */}
     </div>
   );
 }
@@ -111,7 +115,7 @@ function PostsNearbyCounter({ count = 5 }: { count?: number }) {
 const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(samplePost);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(samplePost);
 
   return (
     <div className='min-h-screen relative overflow-hidden'>
