@@ -20,6 +20,7 @@ const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
+    { label: 'Home', icon: <Home className='w-5 h-5 mr-2' />, to: '/' },
     { label: 'Login', icon: <LogIn className='w-5 h-5 mr-2' />, to: '/login' },
     {
       label: 'Sign Up',
