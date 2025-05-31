@@ -267,7 +267,7 @@ export const updateUsernameController = async (c: Context) => {
     const { name } = body;
 
     if (!name) {
-      return c.json(createErrorResponse('Username is required'), 400);
+      return c.json(createErrorResponse('Name is required'), 400);
     }
 
     const result = await changeName(c.user.id.toString(), name);
@@ -275,13 +275,13 @@ export const updateUsernameController = async (c: Context) => {
       return c.json(createErrorResponse(result.message), 400);
     }
 
-    const { id, email, name: updatedUsername } = result.user;
+    const { id, email, name: updatedName } = result.user;
     return c.json(createSuccessResponse(
-      { id, email, name: updatedUsername },
-      'Username updated successfully'
+      { id, email, name: updatedName },
+      'Name updated successfully'
     ));
   } catch (error) {
-    console.error('Update username error:', error);
+    console.error('Update name error:', error);
     return c.json(createErrorResponse('Internal server error'), 500);
   }
 };

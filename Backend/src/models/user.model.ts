@@ -38,7 +38,7 @@ export const createUser = async (
   return { success: true, message: 'User created', user: newUser };
 };
 
-export const updateUsername = async (userId: string, newUsername: string) => {
+export const updateUsername = async (userId: string, newName: string) => {
   const existingUser = await db.user.findUnique({
     where: { id: Number(userId) },
   });
@@ -53,12 +53,12 @@ export const updateUsername = async (userId: string, newUsername: string) => {
 
   const updatedUser = await db.user.update({
     where: { id: Number(userId) },
-    data: { name: newUsername },
+    data: { name: newName },
   });
 
   return {
     success: true,
-    message: 'Username updated',
+    message: 'Name updated',
     user: updatedUser,
   };
 };
