@@ -14,16 +14,6 @@ const samplePost = {
     "Let's study together for the upcoming calculus exam! Meet at the library at 5pm.",
 };
 
-function MapCard() {
-  return (
-    <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
-      <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-        <InteractiveMap />
-      </Card>
-    </div>
-  );
-}
-
 function CreatePostButton({ onClick }: { onClick: () => void }) {
   return (
     <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 z-20'>
@@ -57,14 +47,19 @@ const MapPage = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   // const navigate = useNavigate();
   const [selectedPost, setSelectedPost] = useState(samplePost);
+  const [posts, setPosts] = useState<any[]>([]);
 
   return (
     <div className='min-h-screen relative overflow-hidden'>
-      <MapCard />
+      <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
+        <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
+          <InteractiveMap posts={posts} />
+        </Card>
+      </div>
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
-      <PostsNearbyCounter count={5} />
+      <PostsNearbyCounter count={posts.length} />
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
-      <CreatePostModal open={showCreatePost} onOpenChange={setShowCreatePost} />
+      <CreatePostModal open={showCreatePost} onOpenChange={setShowCreatePost} onCreatePost={post => setPosts(prev => [...prev, post])} />
       <PostModal
         open={!!selectedPost}
         post={selectedPost}

@@ -1,22 +1,27 @@
-import { useLoadScript, GoogleMap, Marker, Circle } from '@react-google-maps/api';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+import { useState, useEffect, useRef } from 'react';
+import { Coffee, Gamepad, Book, Dumbbell, LocateFixed } from 'lucide-react';
 
-// Sample post data (replace with your real data source)
-const posts = [
-  { id: 1, type: 'social', position: { lat: 1.353, lng: 103.819 } },
-  { id: 2, type: 'activity', position: { lat: 1.352, lng: 103.818 } },
-  { id: 3, type: 'study', position: { lat: 1.351, lng: 103.82 } },
-  { id: 4, type: 'entertainment', position: { lat: 1.354, lng: 103.821 } },
-];
-
-const markerIcons: { [key: string]: string } = {
-  social: '/icons/social.png',
-  activity: '/icons/activity.png',
-  study: '/icons/study.png',
-  entertainment: '/icons/entertainment.png',
+const iconMap: { [key: string]: any } = {
+  Coffee,
+  Gamepad,
+  Book,
+  Dumbbell,
 };
 
-const InteractiveMap = () => {
+type Post = {
+  title: string;
+  category: string;
+  description: string;
+  location: string; // 'lat, lng'
+  icon: string;
+};
+
+type InteractiveMapProps = {
+  posts: Post[];
+};
+
+const InteractiveMap = ({ posts }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
   });
@@ -50,6 +55,12 @@ const InteractiveMap = () => {
     );
   }
 
+  // Helper to parse 'lat, lng' string
+  const parseLatLng = (loc: string) => {
+    const [lat, lng] = loc.split(',').map(Number);
+    return { lat, lng };
+  };
+
   return (
     <div className='relative w-full h-full'>
       <GoogleMap
@@ -59,31 +70,35 @@ const InteractiveMap = () => {
         onLoad={map => { mapRef.current = map; }}
         options={{ disableDefaultUI: true, zoomControl: false }}
       >
-        {/* User location as a circle */}
+        {/* User location as a Lucide marker */}
         {userLocation && (
-          <Circle
-            center={userLocation}
-            radius={30}
-            options={{
-              fillColor: '#7C3AED',
-              fillOpacity: 0.4,
-              strokeColor: '#7C3AED',
-              strokeOpacity: 0.8,
-              strokeWeight: 2,
+          <Marker
+            position={userLocation}
+            icon={{
+              url: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="10" fill="#2563eb" fill-opacity="0.8"/><circle cx="20" cy="20" r="5" fill="#fff"/></svg>`),
+              scaledSize: new window.google.maps.Size(40, 40),
             }}
           />
         )}
-        {/* Post markers */}
-        {posts.map(post => (
-          <Marker
-            key={post.id}
-            position={post.position}
-            icon={{
-              url: markerIcons[post.type],
-              scaledSize: new window.google.maps.Size(48, 48),
-            }}
-          />
-        ))}
+        {/* Post markers with Lucide icons */}
+        {posts.map((post, idx) => {
+          const Icon = iconMap[post.icon] || Coffee;
+          const pos = parseLatLng(post.location);
+          // Render Lucide icon as SVG marker
+          const svg = encodeURIComponent(
+            `<svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#fff" fill-opacity="0.9"/><g transform="translate(8,8)">${Icon.render ? Icon.render({ className: 'w-32 h-32' }).props.children : ''}</g></svg>`
+          );
+          return (
+            <Marker
+              key={idx}
+              position={pos}
+              icon={{
+                url: 'data:image/svg+xml;utf8,' + svg,
+                scaledSize: new window.google.maps.Size(48, 48),
+              }}
+            />
+          );
+        })}
       </GoogleMap>
       {/* Zoom and locate controls */}
       <div className='absolute top-4 right-4 flex flex-col gap-2 z-10'>
@@ -109,7 +124,7 @@ const InteractiveMap = () => {
             }
           }}
         >
-          <span role='img' aria-label='locate'>📍</span>
+          <LocateFixed className='w-6 h-6 text-blue-600' />
         </button>
       </div>
     </div>
