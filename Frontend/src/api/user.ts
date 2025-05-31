@@ -11,16 +11,16 @@ export const signupUser = async (data: any) => {
 };
 
 export const loginUser = async (data: { email: string; password: string }) => {
-  const response = await Axios.post('/users/login', data, {
+  const response = await Axios.post('api/users/login', data, {
     headers: {
       'Content-Type': 'application/json',
     },
-    withCredentials: true, 
+    withCredentials: true,
   });
   return response.data;
 };
 
-// GET 
+// GET
 export const getProfile = async () => {
   const response = await Axios.get('api/users/current', {
     withCredentials: true,
