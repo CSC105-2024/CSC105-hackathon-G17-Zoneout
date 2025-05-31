@@ -1,10 +1,14 @@
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Coffee, Gamepad, Book, Dumbbell, LocateFixed } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
 import { getPosts } from '@/api/post';
 import { toast } from 'sonner';
 import PostModal from './PostModal';
+import { Axios } from '@/../axiosInstance';
+
+// Move libraries array outside component to prevent unnecessary reloads
+const GOOGLE_MAPS_LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
 
 // Helper function to convert React icon to SVG string
 const iconToSVG = (IconComponent: any): Promise<string> => {
@@ -54,6 +58,7 @@ const iconMap: { [key: string]: any } = {
 };
 
 type Post = {
+  id: number;
   title: string;
   category: string;
   description: string;
@@ -89,11 +94,12 @@ const calculateDistance = (
 const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
 type InteractiveMapProps = {
   onMarkerClick?: (post: Post) => void;
+  refreshTrigger?: number;
 };
-const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
+const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places', 'geometry']
+    libraries: GOOGLE_MAPS_LIBRARIES
   });
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -107,42 +113,50 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const lastRefreshTrigger = useRef(refreshTrigger);
 
-  // Fetch all posts when component mounts
-  useEffect(() => {
-    const fetchAllPosts = async () => {
-      try {
-        const response = await getPosts();
-        if (response.success) {
-          // Transform backend post format to frontend format
-          const transformedPosts = response.data.map((post: any) => ({
-            title: post.content.split('\n')[0], // First line as title
-            description: post.content,
-            category: post.category,
-            location: `${post.latitude}, ${post.longitude}`,
-            icon: 'Coffee', // Default icon, you can map categories to icons
-            user: post.user
-              ? {
-                  name: post.user.name,
-                  email: post.user.email,
-                  phone: post.user.phone,
-                }
-              : undefined,
-          }));
-          setAllPosts(transformedPosts);
-        }
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-        toast.error('Failed to fetch posts');
-      } finally {
-        setLoading(false);
+  // Memoize the fetch function to prevent unnecessary recreations
+  const fetchAllPosts = useCallback(async () => {
+    if (lastRefreshTrigger.current === refreshTrigger) {
+      return; // Skip if refresh trigger hasn't changed
+    }
+    
+    setLoading(true);
+    try {
+      const response = await getPosts();
+      if (response.success) {
+        const transformedPosts = response.data.map((post: any) => ({
+          id: post.id,
+          title: post.content.split('\n')[0],
+          description: post.content,
+          category: post.category,
+          location: `${post.latitude}, ${post.longitude}`,
+          icon: 'Coffee',
+          user: post.user
+            ? {
+                name: post.user.name,
+                email: post.user.email,
+                phone: post.user.phone,
+              }
+            : undefined,
+        }));
+        setAllPosts(transformedPosts);
+        lastRefreshTrigger.current = refreshTrigger;
       }
-    };
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      toast.error('Failed to fetch posts');
+    } finally {
+      setLoading(false);
+    }
+  }, [refreshTrigger]);
 
+  // Fetch posts when component mounts or refreshTrigger changes
+  useEffect(() => {
     fetchAllPosts();
-  }, []);
+  }, [fetchAllPosts]);
 
-  // Update nearby posts when user location changes
+  // Update nearby posts when user location or allPosts changes
   useEffect(() => {
     if (userLocation && allPosts.length > 0) {
       const nearby = allPosts.filter((post) => {
@@ -219,6 +233,22 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const handleJoin = () => {
     // TODO: Implement join functionality
     console.log('Join activity:', selectedPost?.title);
+  };
+
+  const handleDelete = async (postId: number) => {
+    try {
+      const response = await Axios.delete(`/api/posts/delete-post/${postId}`);
+      if (response.data.success) {
+        setAllPosts((prev) => prev.filter((post) => post.id !== postId));
+        toast.success('Post deleted successfully!');
+        setIsModalOpen(false);
+      } else {
+        toast.error(response.data.msg || 'Failed to delete post');
+      }
+    } catch (error) {
+      toast.error('Failed to delete post. Please try again.');
+      console.error(error);
+    }
   };
 
   if (!isLoaded || loading) {
@@ -306,6 +336,7 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
         post={selectedPost}
         onViewProfile={handleViewProfile}
         onJoin={handleJoin}
+        onDelete={selectedPost ? () => handleDelete(Number(selectedPost.id)) : undefined}
       />
 
       {/* Nearby posts counter */}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -9,11 +9,18 @@ import PostModal from '@/components/App/PostModal';
 import { createPost, getPosts, CreatePostData } from '@/api/post';
 import { toast } from 'sonner';
 
-const samplePost = {
-  title: 'Study Group: Calculus',
-  author: 'Alice',
-  description:
-    "Let's study together for the upcoming calculus exam! Meet at the library at 5pm.",
+type Post = {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  icon: string;
+  user?: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
 };
 
 function CreatePostButton({ onClick }: { onClick: () => void }) {
@@ -47,71 +54,45 @@ function PostsNearbyCounter({ count }: { count: number }) {
 const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(samplePost);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Fetch posts when component mounts
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await getPosts();
-        if (response.success) {
-          // Transform backend post format to frontend format
-          const transformedPosts = response.data.map((post: any) => ({
-            title: post.content.split('\n')[0], // First line as title
-            description: post.content,
-            category: post.category,
-            location: `${post.latitude}, ${post.longitude}`,
-            icon: 'Coffee', // Default icon, you can map categories to icons
-            user: post.user ? {
-              name: post.user.name,
-              email: post.user.email,
-              phone: post.user.phone,
-            } : undefined,
-          }));
-          setPosts(transformedPosts);
-        }
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-        toast.error('Failed to fetch posts');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  const handleCreatePost = async (postData: CreatePostData) => {
+  // Memoize the create post handler to prevent unnecessary recreations
+  const handleCreatePost = useCallback(async (postData: CreatePostData) => {
     try {
+      setLoading(true);
       const response = await createPost(postData);
       if (response.success) {
-        // Add the new post to the list
-        setPosts((prev) => [...prev, {
-          title: postData.title,
-          description: postData.description,
-          category: postData.category,
-          location: postData.location,
-          icon: postData.icon,
-        }]);
+        // Increment refresh trigger to force a re-fetch
+        setRefreshTrigger(prev => prev + 1);
         toast.success('Post created successfully!');
+        setShowCreatePost(false);
       }
     } catch (error) {
       console.error('Error creating post:', error);
       toast.error('Failed to create post');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
+
+  // Handle marker click
+  const handleMarkerClick = useCallback((post: Post) => {
+    setSelectedPost(post);
+  }, []);
 
   return (
     <div className='min-h-screen relative overflow-hidden'>
       <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
         <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-          <InteractiveMap posts={posts} onMarkerClick={(post) => setSelectedPost(post)} />
+          <InteractiveMap 
+            refreshTrigger={refreshTrigger}
+            onMarkerClick={handleMarkerClick}
+          />
         </Card>
       </div>
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
-      <PostsNearbyCounter count={posts.length} />
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
       <CreatePostModal
         open={showCreatePost}

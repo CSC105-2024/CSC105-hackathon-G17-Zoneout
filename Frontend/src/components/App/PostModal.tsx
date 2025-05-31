@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
 
-const PostModal = ({ open, onClose, post, onViewProfile, onJoin }: { open: boolean, onClose: () => void, post: any, onViewProfile: () => void, onJoin: () => void }) => {
+const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { open: boolean, onClose: () => void, post: any, onViewProfile: () => void, onJoin: () => void, onDelete?: () => void }) => {
   if (!open || !post) return null;
 
   return (
@@ -68,6 +69,18 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin }: { open: boole
             >
               Join
             </Button>
+            {onDelete && (
+              <Button
+                className='font-bold bg-red-500 hover:bg-red-600 text-white'
+                onClick={onDelete}
+                style={{ borderRadius: 'var(--radius)' }}
+              >
+                <span className='flex items-center gap-2'>
+                  <Trash/>
+                  Delete
+                </span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
