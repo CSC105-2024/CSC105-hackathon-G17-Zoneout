@@ -1,41 +1,24 @@
-import { useEffect, useState } from 'react';
 import ProfileInfoCard from '@/components/Profile/ProfileInfoCard';
 import ActivityHistoryCard from '@/components/Profile/ActivityHistoryCard';
-import { userApi } from '@/services/api';
 import { Button } from '@/components/ui/button';
-import { useLogout } from '@/hooks/use-users';
+import { useLogout, useUpdateProfile, useCurrentUser } from '@/hooks/use-users';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 const MyProfile = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const { data: user, isLoading, error } = useCurrentUser();
   const { mutateAsync: logout, isLoading: isLogoutLoading } = useLogout();
+  const { mutateAsync: updateProfile } = useUpdateProfile();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await userApi.getCurrentUser();
-        setUser(response.data.data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to fetch user data');
-        console.error('Error fetching user:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleUpdateProfile = async (data: { name: string; phone: string }) => {
+    await updateProfile(data);
+    queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+  };
 
-    fetchUserData();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!user) return <div>No user data found</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error || !user?.data) return <div>Error: Failed to fetch user data</div>;
 
   return (
     <div
@@ -48,12 +31,9 @@ const MyProfile = () => {
       <div className='container mx-auto px-6 relative z-10'>
         <div className='max-w-4xl mx-auto space-y-8'>
           <ProfileInfoCard
-            user={user}
+            user={user.data}
             editable
-            onEdit={() => {
-              /* edit logic */
-              console.log('edit');
-            }}
+            onUpdateProfile={handleUpdateProfile}
           />
           <ActivityHistoryCard history={[]} />
           <Button

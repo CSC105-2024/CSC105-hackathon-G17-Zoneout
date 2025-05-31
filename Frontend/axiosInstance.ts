@@ -8,24 +8,24 @@ const Axios = axios.create({
   },
 });
 
-// Add request interceptor to include access token
-Axios.interceptors.request.use(
-  (config) => {
-    // Get the access token from cookies
-    const cookies = document.cookie.split(';');
-    const accessToken = cookies
-      .find(cookie => cookie.trim().startsWith('accessToken='))
-      ?.split('=')[1];
+// // Add request interceptor to include access token
+// Axios.interceptors.request.use(
+//   (config) => {
+//     // Get the access token from cookies
+//     const cookies = document.cookie.split(';');
+//     const accessToken = cookies
+//       .find(cookie => cookie.trim().startsWith('accessToken='))
+//       ?.split('=')[1];
 
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//     if (accessToken) {
+//       config.headers.Authorization = `Bearer ${accessToken}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 // Add response interceptor to handle token refresh
 Axios.interceptors.response.use(
@@ -37,21 +37,22 @@ Axios.interceptors.response.use(
       error.response.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.includes('/login') &&
-      !originalRequest.url.includes('/signup')
+      !originalRequest.url.includes('/signup') &&
+      !originalRequest.url.includes('/refresh-token')
     ) {
       originalRequest._retry = true;
-      if (document.cookie.includes('refreshToken')) {
-        try {
-          await Axios.post(
-            '/api/users/refresh-token',
-            {},
-            { withCredentials: true }
-          );
-          return Axios(originalRequest);
-        } catch (refreshError) {
+      try {
+        await Axios.post(
+          '/api/users/refresh-token',
+          {},
+          { withCredentials: true }
+        );
+        return Axios(originalRequest);
+      } catch (refreshError) {
+        if (window.location.pathname !== '/login') {
           window.location.href = '/login';
-          return Promise.reject(refreshError);
         }
+        return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);

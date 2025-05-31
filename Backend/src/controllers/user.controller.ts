@@ -1,4 +1,9 @@
-import type { Context, CreateUserBody, UserResponse, ApiResponse } from '../types/user.types.ts';
+import type {
+  Context,
+  CreateUserBody,
+  UserResponse,
+  ApiResponse,
+} from '../types/user.types.ts';
 import { db } from '../index.ts';
 import {
   createUser,
@@ -13,7 +18,10 @@ import {
 import { setCookie, deleteCookie } from 'hono/cookie';
 import jwt from 'jsonwebtoken';
 
-const createSuccessResponse = <T>(data: T, message: string): ApiResponse<T> => ({
+const createSuccessResponse = <T>(
+  data: T,
+  message: string
+): ApiResponse<T> => ({
   success: true,
   data,
   message,
@@ -28,7 +36,7 @@ const createErrorResponse = (message: string): ApiResponse => ({
 export const getCurrentUserController = async (c: Context) => {
   const cUser = c.get('user');
   if (!cUser) return c.json(createErrorResponse('Unauthorized'), 401);
-  
+
   const user = await db.user.findUnique({
     where: { id: Number(cUser.id) },
     select: { id: true, name: true, email: true, phone: true },
@@ -63,7 +71,7 @@ export const loginController = async (c: Context) => {
   try {
     const body = await c.req.json<CreateUserBody>();
     const { email, password } = body;
-    
+
     if (!email || !password) {
       return c.json(createErrorResponse('Missing required fields'), 400);
     }
@@ -76,7 +84,10 @@ export const loginController = async (c: Context) => {
       return c.json(createErrorResponse('User not found'), 404);
     }
 
-    const isPasswordMatch = await ispasswordMatch(password, existingUser.password);
+    const isPasswordMatch = await ispasswordMatch(
+      password,
+      existingUser.password
+    );
     if (!isPasswordMatch) {
       return c.json(createErrorResponse('Invalid password'), 401);
     }
@@ -87,7 +98,7 @@ export const loginController = async (c: Context) => {
       name: existingUser.name ?? '',
     });
     const refreshToken = generateRefreshToken(existingUser.id.toString());
-    console.log("Access Token:", accessToken);
+    console.log('Access Token:', accessToken);
     await db.user.update({
       where: { id: existingUser.id },
       data: {
@@ -112,10 +123,15 @@ export const loginController = async (c: Context) => {
       secure: isProduction,
     });
 
-    return c.json(createSuccessResponse({
-      ...userResponse,
-      accessToken,
-    }, 'Login successful'));
+    return c.json(
+      createSuccessResponse(
+        {
+          ...userResponse,
+          accessToken,
+        },
+        'Login successful'
+      )
+    );
   } catch (e) {
     console.error('Login error:', e);
     return c.json(createErrorResponse('Internal server error'), 500);
@@ -216,13 +232,10 @@ export const refreshTokenController = async (c: Context) => {
 
 export const updateProfileController = async (c: Context) => {
   try {
-    if (!c.user) return c.json(createErrorResponse('Unauthorized'), 401);
-    
-    const userId = c.req.param('userId');
-    if (!userId || Number(userId) !== c.user.id) {
-      return c.json(createErrorResponse('Unauthorized to update this profile'), 403);
-    }
-    
+    const user = c.get('user');
+    if (!user) return c.json(createErrorResponse('Unauthorized'), 401);
+
+    const userId = user.id;
     const body = await c.req.json<Partial<CreateUserBody>>();
     const { name, phone } = body;
 
@@ -231,7 +244,9 @@ export const updateProfileController = async (c: Context) => {
       return c.json(createErrorResponse(response.message), 400);
     }
 
-    return c.json(createSuccessResponse(response.user, 'Profile updated successfully'));
+    return c.json(
+      createSuccessResponse(response.user, 'Profile updated successfully')
+    );
   } catch (e) {
     console.error('Update profile error:', e);
     return c.json(createErrorResponse('Internal server error'), 500);
@@ -244,7 +259,10 @@ export const updatePhonenumberController = async (c: Context) => {
 
     const userId = c.req.param('userId');
     if (!userId || Number(userId) !== c.user.id) {
-      return c.json(createErrorResponse('Unauthorized to update this profile'), 403);
+      return c.json(
+        createErrorResponse('Unauthorized to update this profile'),
+        403
+      );
     }
 
     const user = await db.user.findUnique({
@@ -266,10 +284,12 @@ export const updatePhonenumberController = async (c: Context) => {
     }
 
     const { id, email, name, phone: updatedPhone } = result.user;
-    return c.json(createSuccessResponse(
-      { id, email, name, phone: updatedPhone },
-      'Phone number updated successfully'
-    ));
+    return c.json(
+      createSuccessResponse(
+        { id, email, name, phone: updatedPhone },
+        'Phone number updated successfully'
+      )
+    );
   } catch (e) {
     console.error('Update phone number error:', e);
     return c.json(createErrorResponse('Internal server error'), 500);
@@ -282,7 +302,10 @@ export const updateUsernameController = async (c: Context) => {
 
     const userId = c.req.param('userId');
     if (!userId || Number(userId) !== c.user.id) {
-      return c.json(createErrorResponse('Unauthorized to update this profile'), 403);
+      return c.json(
+        createErrorResponse('Unauthorized to update this profile'),
+        403
+      );
     }
 
     const body = await c.req.json<Pick<CreateUserBody, 'name'>>();
@@ -298,10 +321,12 @@ export const updateUsernameController = async (c: Context) => {
     }
 
     const { id, email, name: updatedName } = result.user;
-    return c.json(createSuccessResponse(
-      { id, email, name: updatedName },
-      'Name updated successfully'
-    ));
+    return c.json(
+      createSuccessResponse(
+        { id, email, name: updatedName },
+        'Name updated successfully'
+      )
+    );
   } catch (error) {
     console.error('Update name error:', error);
     return c.json(createErrorResponse('Internal server error'), 500);
