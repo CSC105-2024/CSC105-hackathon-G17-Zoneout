@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { PrismaClient } from './generated/prisma/index.js';
 import dotenv from 'dotenv';
 import { cors } from 'hono/cors';
-import { router } from './routes/index.routes.ts';
+import { router } from './routes/index.routes.js';
 
 dotenv.config();
 const app = new Hono();
@@ -11,19 +11,25 @@ export const db = new PrismaClient();
 
 app.use('/*', cors());
 
-serve({
-  fetch: app.fetch,
-  port: 3000,
-}, (info) => {
-  console.log(`Server is running on port ${info.port}`);
-});
-
-db.$connect()
-  .then(() => {
+// Connect to database and start server
+async function startServer() {
+  try {
+    await db.$connect();
     console.log('Connected to the database');
-  })
-  .catch((error) => {
-    console.error('Error connecting to the database:', error);
-  });
+
+    serve({
+      fetch: app.fetch,
+      port: 3000,
+    }, (info) => {
+      console.log(`Server is running on port ${info.port}`);
+    });
+  } catch (error) {
+    console.error('Failed to connect to the database:', error);
+    process.exit(1);
+  }
+}
 
 app.route('/api', router);
+
+// Start the server
+startServer();
