@@ -8,24 +8,24 @@ const Axios = axios.create({
   },
 });
 
-// Add request interceptor to include access token
-Axios.interceptors.request.use(
-  (config) => {
-    // Get the access token from cookies
-    const cookies = document.cookie.split(';');
-    const accessToken = cookies
-      .find(cookie => cookie.trim().startsWith('accessToken='))
-      ?.split('=')[1];
+// // Add request interceptor to include access token
+// Axios.interceptors.request.use(
+//   (config) => {
+//     // Get the access token from cookies
+//     const cookies = document.cookie.split(';');
+//     const accessToken = cookies
+//       .find(cookie => cookie.trim().startsWith('accessToken='))
+//       ?.split('=')[1];
 
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//     if (accessToken) {
+//       config.headers.Authorization = `Bearer ${accessToken}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 // Add response interceptor to handle token refresh
 Axios.interceptors.response.use(

@@ -1,5 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { loginUser, signupUser, getProfile, logoutUser } from '@/api/user';
+import {
+  loginUser,
+  signupUser,
+  getProfile,
+  logoutUser,
+  updateProfile,
+} from '@/api/user';
 
 export function useSignup() {
   return useMutation({
@@ -22,5 +28,17 @@ export function useCurrentUser() {
 export function useLogout() {
   return useMutation({
     mutationFn: logoutUser,
+  });
+}
+
+export function useUpdateProfile() {
+  return useMutation({
+    mutationFn: ({
+      ...data
+    }: {
+      userId: string;
+      name: string;
+      phone: string;
+    }) => updateProfile(data),
   });
 }
