@@ -1,5 +1,6 @@
 import type { Context } from 'hono';
 import * as postModel from '../models/post.model.ts';
+import { db } from '../index.ts';
 
 type CreatePostBody = {
   content: string;
@@ -192,6 +193,38 @@ export const deletePost = async (c: Context) => {
   } catch (e) {
     return c.json(
       { success: false, data: null, msg: `Internal Server Error: ${e}` },
+      500
+    );
+  }
+};
+
+export const getAllPosts = async (c: Context) => {
+  try {
+    const posts = await db.post.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return c.json({
+      success: true,
+      data: posts,
+      msg: 'Posts fetched successfully',
+    });
+  } catch (e) {
+    return c.json(
+      {
+        success: false,
+        data: null,
+        msg: `Internal Server Error: ${e}`,
+      },
       500
     );
   }
