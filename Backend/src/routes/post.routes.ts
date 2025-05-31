@@ -7,6 +7,6 @@ postRouter.post('/', postController.createPost);
 postRouter.get('/user/:userId', postController.getPostsByUser);
 postRouter.put('/:postId', postController.editPost);
 postRouter.delete('/:postId', postController.deletePost);
-postRouter.post('/increment-like/:postId', postController.incrementLikeCount);
+//test
 
 export { postRouter }; 
