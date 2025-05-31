@@ -1,7 +1,10 @@
+import Map from './components/Map'
 
-const App = () => {
+function App() {
   return (
-    <div>App</div>
+    <div>
+      <Map />
+    </div>
   )
 }
 

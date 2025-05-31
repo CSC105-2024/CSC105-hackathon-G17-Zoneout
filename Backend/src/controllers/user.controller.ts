@@ -103,7 +103,10 @@ export const loginController = async (c: Context) => {
       secure: isProduction,
     });
 
-    return c.json(createSuccessResponse(userResponse, 'Login successful'));
+    return c.json(createSuccessResponse({
+      ...userResponse,
+      accessToken,
+    }, 'Login successful'));
   } catch (e) {
     console.error('Login error:', e);
     return c.json(createErrorResponse('Internal server error'), 500);
@@ -195,10 +198,15 @@ export const updateProfileController = async (c: Context) => {
   try {
     if (!c.user) return c.json(createErrorResponse('Unauthorized'), 401);
     
+    const userId = c.req.param('userId');
+    if (!userId || Number(userId) !== c.user.id) {
+      return c.json(createErrorResponse('Unauthorized to update this profile'), 403);
+    }
+    
     const body = await c.req.json<Partial<CreateUserBody>>();
     const { name, phone } = body;
 
-    const response = await updateUser(c.user.id.toString(), name, phone);
+    const response = await updateUser(userId, name, phone);
     if (!response.success) {
       return c.json(createErrorResponse(response.message), 400);
     }
@@ -214,8 +222,13 @@ export const updatePhonenumberController = async (c: Context) => {
   try {
     if (!c.user) return c.json(createErrorResponse('Unauthorized'), 401);
 
+    const userId = c.req.param('userId');
+    if (!userId || Number(userId) !== c.user.id) {
+      return c.json(createErrorResponse('Unauthorized to update this profile'), 403);
+    }
+
     const user = await db.user.findUnique({
-      where: { id: c.user.id },
+      where: { id: Number(userId) },
     });
 
     if (!user) {
@@ -227,7 +240,7 @@ export const updatePhonenumberController = async (c: Context) => {
       return c.json(createErrorResponse('Invalid phone number'), 400);
     }
 
-    const result = await changePhoneNumber(c.user.id.toString(), phone);
+    const result = await changePhoneNumber(userId, phone);
     if (!result.success || !result.user) {
       return c.json(createErrorResponse(result.message), 400);
     }
@@ -247,6 +260,11 @@ export const updateUsernameController = async (c: Context) => {
   try {
     if (!c.user) return c.json(createErrorResponse('Unauthorized'), 401);
 
+    const userId = c.req.param('userId');
+    if (!userId || Number(userId) !== c.user.id) {
+      return c.json(createErrorResponse('Unauthorized to update this profile'), 403);
+    }
+
     const body = await c.req.json<Pick<CreateUserBody, 'name'>>();
     const { name } = body;
 
@@ -254,7 +272,7 @@ export const updateUsernameController = async (c: Context) => {
       return c.json(createErrorResponse('Name is required'), 400);
     }
 
-    const result = await changeName(c.user.id.toString(), name);
+    const result = await changeName(userId, name);
     if (!result.success || !result.user) {
       return c.json(createErrorResponse(result.message), 400);
     }
