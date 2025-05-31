@@ -74,9 +74,19 @@ const InteractiveMap = ({ posts }: InteractiveMapProps) => {
         {userLocation && (
           <Marker
             position={userLocation}
+            // icon={{
+            //   url: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="10" fill="#2563eb" fill-opacity="0.8"/><circle cx="20" cy="20" r="5" fill="#fff"/></svg>`),
+            //   scaledSize: new window.google.maps.Size(40, 40),
+            // }}
             icon={{
-              url: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="10" fill="#2563eb" fill-opacity="0.8"/><circle cx="20" cy="20" r="5" fill="#fff"/></svg>`),
-              scaledSize: new window.google.maps.Size(40, 40),
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="15" cy="15" r="12" fill="#4285f4" stroke="#ffffff" stroke-width="3"/>
+                  <circle cx="15" cy="15" r="4" fill="#ffffff"/>
+                </svg>
+              `),
+              scaledSize: new window.google.maps.Size(30, 30),
+              anchor: new window.google.maps.Point(15, 15),
             }}
           />
         )}
@@ -93,8 +103,14 @@ const InteractiveMap = ({ posts }: InteractiveMapProps) => {
               key={idx}
               position={pos}
               icon={{
-                url: 'data:image/svg+xml;utf8,' + svg,
-                scaledSize: new window.google.maps.Size(48, 48),
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                  <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="15" cy="15" r="12" fill="#4285f4" stroke="#ffffff" stroke-width="3"/>
+                    <circle cx="15" cy="15" r="4" fill="#ffffff"/>
+                  </svg>
+                `),
+                scaledSize: new window.google.maps.Size(30, 30),
+                anchor: new window.google.maps.Point(15, 15),
               }}
             />
           );

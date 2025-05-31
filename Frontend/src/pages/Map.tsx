@@ -27,7 +27,8 @@ function CreatePostButton({ onClick }: { onClick: () => void }) {
       </Button>
     </div>
   );
-}2
+}
+2;
 
 function PostsNearbyCounter({ count = 5 }: { count?: number }) {
   return (
@@ -58,7 +59,11 @@ const MapPage = () => {
       <CreatePostButton onClick={() => setShowCreatePost(true)} />
       <PostsNearbyCounter count={posts.length} />
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
-      <CreatePostModal open={showCreatePost} onOpenChange={setShowCreatePost} onCreatePost={post => setPosts(prev => [...prev, post])} />
+      <CreatePostModal
+        open={showCreatePost}
+        onOpenChange={setShowCreatePost}
+        onCreatePost={(post) => setPosts((prev) => [...prev, post])}
+      />
       <PostModal
         open={!!selectedPost}
         post={selectedPost}
