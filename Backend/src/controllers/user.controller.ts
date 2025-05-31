@@ -89,8 +89,8 @@ export const loginController = async (c: Context) => {
     await db.user.update({
       where: { id: existingUser.id },
       data: {
-        accessToken: { set: accessToken.toString() },
-        refreshToken: { set: refreshToken },
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       },
     });
 
@@ -184,8 +184,8 @@ export const refreshTokenController = async (c: Context) => {
     await db.user.update({
       where: { id: user.id },
       data: {
-        accessToken: { set: newAccessToken },
-        refreshToken: { set: newRefreshToken },
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       },
     });
 
