@@ -9,13 +9,14 @@ import HomePage from './pages/HomePage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import AppLayout from './AppLayout';
+import MapPage from './pages/Map';
 const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />, // Main layout component
     children: [
       { path: '', element: <HomePage /> },
-      { path: 'map', element: <Map /> },
+      { path: 'map', element: <MapPage /> },
       { path: 'profile', element: <ViewProfile /> },
       { path: 'signup', element: <SignupPage /> },
       { path: 'login', element: <LoginPage /> },
