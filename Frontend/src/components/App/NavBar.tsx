@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCurrentUser } from '@/hooks/use-users';
+import logo from '@/assets/logo.png';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -52,53 +53,51 @@ const NavBar = () => {
         ]),
   ];
 
-  const handleNav = (to) => {
+  const handleNav = (to: string) => {
     setMobileOpen(false);
     navigate(to);
   };
 
-  // Drawer JSX
   const drawer = (
-    <div className='fixed inset-0 z-[9999] bg-black/40 flex justify-end md:hidden'>
-      <div className='w-64 bg-white h-full shadow-lg flex flex-col p-6 gap-2 animate-slide-in-right relative'>
-        <button
-          className='absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors'
-          onClick={() => setMobileOpen(false)}
-          aria-label='Close menu'
-        >
-          <X className='w-7 h-7' />
-        </button>
-        <div className='flex items-center gap-3 mb-8 mt-2'>
-          <div className='w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg rotate-12'>
-            <MapPin className='w-6 h-6 text-white' />
+    <div className='fixed inset-0 z-50 md:hidden'>
+      {/* Backdrop */}
+      <div
+        className='fixed inset-0 bg-black/20 backdrop-blur-sm'
+        onClick={() => setMobileOpen(false)}
+      />
+
+      {/* Drawer */}
+      <div className='fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl'>
+        <div className='flex flex-col h-full'>
+          {/* Header */}
+          <div className='flex items-center justify-between p-4 border-b'>
+            <h2 className='text-lg font-semibold'>Menu</h2>
+            <button
+              className='p-2 rounded-lg hover:bg-gray-100'
+              onClick={() => setMobileOpen(false)}
+            >
+              <X className='w-6 h-6' />
+            </button>
           </div>
-          <span className='text-2xl font-black bg-gradient-to-r from-pink-600 to-purple-700 bg-clip-text text-transparent'>
-            ZONEOUT
-          </span>
+
+          {/* Links */}
+          <div className='flex-1 overflow-y-auto p-4'>
+            <div className='flex flex-col gap-2'>
+              {navLinks.map((link) => (
+                <Button
+                  key={link.label}
+                  onClick={() => handleNav(link.to)}
+                  variant='ghost'
+                  className='justify-start'
+                >
+                  {link.icon}
+                  {link.label}
+                </Button>
+              ))}
+            </div>
+          </div>
         </div>
-        {navLinks.map((link) => (
-          <Button
-            key={link.label}
-            onClick={() => handleNav(link.to)}
-            variant='ghost'
-            className='justify-start rounded-xl w-full text-lg text-purple-800 hover:bg-[var(--nav-bg-color)]'
-          >
-            {link.icon}
-            {link.label}
-          </Button>
-        ))}
       </div>
-      <style>
-        {`
-          .animate-slide-in-right {
-            animation: slideInRight 0.2s cubic-bezier(.4,0,.2,1);
-          }
-          @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-          }
-        `}
-      </style>
     </div>
   );
 
@@ -109,8 +108,8 @@ const NavBar = () => {
     >
       {/* LOGO */}
       <div className='flex items-center gap-3' onClick={() => navigate('/')}>
-        <div className='w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg rotate-12'>
-          <MapPin className='w-8 h-8 text-white' />
+        <div className='w-14 h-14 rounded-full flex items-center justify-center shadow-lg overflow-hidden'>
+          <img src={logo} alt="Zoneout Logo" className='w-full h-full object-cover' />
         </div>
         <h1 className='text-4xl font-black text-white drop-shadow-lg -skew-x-6 bg-gradient-to-r from-pink-600 to-purple-700 bg-clip-text text-transparent'>
           ZONEOUT
