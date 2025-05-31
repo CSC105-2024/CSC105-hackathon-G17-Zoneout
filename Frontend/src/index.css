@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,6 +42,15 @@
 }
 
 :root {
+  --main-bg-gradient: linear-gradient(
+    to bottom right,
+    #fde68a,
+    #f9a8d4,
+    #a78bfa
+  ); /* yellow-300, pink-300, purple-400 */
+  --nav-bg-color: rgba(255, 255, 255, 0.4);
+
+  /* Library CSS */
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
