@@ -38,9 +38,9 @@ export const createUser = async (
   return { success: true, message: 'User created', user: newUser };
 };
 
-export const updateUsername = async (userId: string, newUsername: string) => {
+export const updateUsername = async (userId: string, newName: string) => {
   const existingUser = await db.user.findUnique({
-    where: { id: userId },
+    where: { id: Number(userId) },
   });
 
   if (!existingUser) {
@@ -52,13 +52,13 @@ export const updateUsername = async (userId: string, newUsername: string) => {
   }
 
   const updatedUser = await db.user.update({
-    where: { id: userId },
-    data: { name: newUsername },
+    where: { id: Number(userId) },
+    data: { name: newName },
   });
 
   return {
     success: true,
-    message: 'Username updated',
+    message: 'Name updated',
     user: updatedUser,
   };
 };
@@ -84,40 +84,40 @@ export const generateToken = (user: userPayLoad): string => {
   return jwt.sign(payload, secret, { expiresIn: '15m' });
 };
 
-export const getUserSoldTickets = async (userId: string) => {
+export const getUserPosts = async (userId: string) => {
   try {
-    const userWithTickets = await db.user.findUnique({
-      where: { id: userId },
+    const userWithPosts = await db.user.findUnique({
+      where: { id: Number(userId) },
       include: {
-        tickets: {
+        posts: {
           orderBy: { createdAt: 'desc' },
         },
       },
     });
 
-    if (!userWithTickets) {
+    if (!userWithPosts) {
       return {
         success: false,
         message: 'User not found',
-        tickets: null,
+        posts: null,
       };
     }
 
     return {
       success: true,
-      message: 'Tickets retrieved successfully',
-      tickets: userWithTickets.tickets,
+      message: 'Posts retrieved successfully',
+      posts: (userWithPosts as typeof userWithPosts & { posts: any[] }).posts,
       user: {
-        id: userWithTickets.id,
-        name: userWithTickets.name,
-        email: userWithTickets.email,
+        id: userWithPosts.id,
+        name: userWithPosts.name,
+        email: userWithPosts.email,
       },
     };
   } catch (error) {
     return {
       success: false,
-      message: 'Error retrieving tickets',
-      tickets: null,
+      message: 'Error retrieving posts',
+      posts: null,
     };
   }
 };
@@ -129,7 +129,7 @@ export const updateUser = async (
 ) => {
   try {
     const updatedUser = await db.user.update({
-      where: { id: userId },
+      where: { id: Number(userId) },
       data: {
         ...(name && { name }),
         ...(phone && { phone }),
@@ -154,7 +154,7 @@ export const updateUser = async (
 export const changeName = async (userId: string, name: string) => {
   try {
     const existingUser = await db.user.findUnique({
-      where: { id: userId },
+      where: { id: Number(userId) },
     });
 
     if (!existingUser) {
@@ -166,7 +166,7 @@ export const changeName = async (userId: string, name: string) => {
     }
 
     const updatedUser = await db.user.update({
-      where: { id: userId },
+      where: { id: Number(userId) },
       data: { name },
     });
 
@@ -182,56 +182,10 @@ export const changeName = async (userId: string, name: string) => {
     };
   }
 };
-
-// Simple delete ticket
-export const deleteTicket = async (ticketId: string, userId: string) => {
-  try {
-    const ticket = await db.ticket.findUnique({
-      where: { id: ticketId },
-    });
-
-    if (!ticket) {
-      return {
-        success: false,
-        message: 'Ticket not found',
-        ticket: null,
-      };
-    }
-
-    // Check if user is the seller
-    if (ticket.sellerId !== userId) {
-      return {
-        success: false,
-        message: 'You can only delete tickets you are selling',
-        ticket: null,
-      };
-    }
-
-    // Delete the ticket
-    const deletedTicket = await db.ticket.delete({
-      where: { id: ticketId },
-    });
-
-    return {
-      success: true,
-      message: 'Ticket deleted successfully',
-      ticket: deletedTicket,
-    };
-  } catch (error) {
-    console.error('Error deleting ticket:', error);
-    return {
-      success: false,
-      message: 'Error deleting ticket',
-      ticket: null,
-    };
-  }
-};
-
-//to use in save change in profile page
 export const changePhoneNumber = async (userId: string, userPhone: string) => {
   try {
     const existingUser = await db.user.findUnique({
-      where: { id: userId },
+      where: { id: Number(userId) },
     });
     if (!existingUser) {
       return {
@@ -250,7 +204,7 @@ export const changePhoneNumber = async (userId: string, userPhone: string) => {
       };
     }
     const updatedUser = await db.user.update({
-      where: { id: userId },
+      where: { id: Number(userId) },
       data: { phone: userPhone },
     });
     return {

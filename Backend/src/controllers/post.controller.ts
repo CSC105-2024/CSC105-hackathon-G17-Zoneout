@@ -2,21 +2,20 @@ import type { Context } from 'hono';
 import * as postModel from '../models/post.model.ts';
 
 type CreatePostBody = {
-  userId: number;
   content: string;
   latitude: number;
   longitude: number;
   category: string;
   isEvent?: boolean;
-  expiresAt: string; // ISO string expected
+  expiresAt: string;
 };
 
 export const createPost = async (c: Context) => {
   try {
     const body = await c.req.json<CreatePostBody>();
+    const user = c.get('user');
 
     const {
-      userId,
       content,
       latitude,
       longitude,
@@ -25,7 +24,7 @@ export const createPost = async (c: Context) => {
       expiresAt,
     } = body;
 
-    if (!userId || !content || !latitude || !longitude || !category || !expiresAt) {
+    if (!content || !latitude || !longitude || !category || !expiresAt) {
       return c.json(
         {
           success: false,
@@ -37,7 +36,7 @@ export const createPost = async (c: Context) => {
     }
 
     const result = await postModel.createPost({
-      userId,
+      userId: Number(user.id),
       content,
       latitude,
       longitude,
@@ -66,6 +65,7 @@ export const createPost = async (c: Context) => {
 export const getPostsByUser = async (c: Context) => {
   try {
     const userId = Number(c.req.param('userId'));
+    const user = c.get('user');
 
     if (isNaN(userId)) {
       return c.json(
@@ -75,6 +75,18 @@ export const getPostsByUser = async (c: Context) => {
           msg: 'Invalid user ID',
         },
         400
+      );
+    }
+
+    // Optional: Check if user is requesting their own posts or has permission
+    if (Number(user.id) !== userId) {
+      return c.json(
+        {
+          success: false,
+          data: null,
+          msg: 'Not authorized to view these posts',
+        },
+        403
       );
     }
 
@@ -110,11 +122,22 @@ export const editPost = async (c: Context) => {
   try {
     const postId = Number(c.req.param('postId'));
     const body = await c.req.json<EditPostBody>();
+    const user = c.get('user');
 
     if (isNaN(postId)) {
       return c.json(
         { success: false, data: null, msg: 'Invalid post ID' },
         400
+      );
+    }
+
+    const posts = await postModel.getPostsByUserId(Number(user.id));
+    const postToEdit = posts.find(post => post.id === postId);
+
+    if (!postToEdit) {
+      return c.json(
+        { success: false, data: null, msg: 'Post not found or not authorized' },
+        404
       );
     }
 
@@ -139,11 +162,23 @@ export const editPost = async (c: Context) => {
 export const deletePost = async (c: Context) => {
   try {
     const postId = Number(c.req.param('postId'));
+    const user = c.get('user'); // Get authenticated user from context
 
     if (isNaN(postId)) {
       return c.json(
         { success: false, data: null, msg: 'Invalid post ID' },
         400
+      );
+    }
+
+    // First get the post to check ownership
+    const posts = await postModel.getPostsByUserId(Number(user.id));
+    const postToDelete = posts.find(post => post.id === postId);
+
+    if (!postToDelete) {
+      return c.json(
+        { success: false, data: null, msg: 'Post not found or not authorized' },
+        404
       );
     }
 

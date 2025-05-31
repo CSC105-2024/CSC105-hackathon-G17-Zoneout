@@ -1,11 +1,11 @@
 import { Hono } from 'hono';
 import { postRouter } from './post.routes.ts';
-// Import other routers here as needed
+import { userRouter } from './user.route.ts';
 
 const router = new Hono();
 
 // Mount all routers
+router.route('/users',userRouter)
 router.route('/posts', postRouter);
-// Mount other routers here as needed
 
 export { router }; 
