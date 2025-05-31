@@ -97,16 +97,16 @@ const NavBar = () => {
                     variant='ghost'
                     className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start
                       ${isActive
-                        ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none'
-                        : 'border border-white/60 bg-transparent text-white hover:bg-white/10'}
+                        ? 'bg-gradient-to-r from-orange-700 to-pink-800 text-white border-none'
+                        : 'border border-white/30 bg-transparent text-white hover:bg-white/5'}
                     `}
-                    style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)' : undefined }}
+                    style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.08)' : undefined }}
                   >
                     {link.icon}
                     <span
                       className={
                         isActive
-                          ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg"
+                          ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-pink-400 drop-shadow-sm"
                           : ""
                       }
                     >
@@ -124,7 +124,7 @@ const NavBar = () => {
 
   return (
     <nav
-      className='w-full flex items-center justify-between p-6 border-b-4 border-white/30 shadow-lg backdrop-blur-md'
+      className='w-full flex items-center justify-between p-6 border-b-4 border-white/15 shadow-md backdrop-blur-md'
       style={{ background: 'var(--nav-bg-color)' }}
     >
       {/* LOGO */}
@@ -139,7 +139,7 @@ const NavBar = () => {
             className='w-full h-full object-cover'
           />
         </div>
-        <h1 className='text-4xl font-black text-white drop-shadow-lg -skew-x-6 bg-gradient-to-r from-pink-600 to-purple-700 bg-clip-text text-transparent'>
+        <h1 className='text-4xl font-black text-white drop-shadow-sm -skew-x-6 bg-gradient-to-r from-pink-800 to-purple-900 bg-clip-text text-transparent'>
           ZONEOUT
         </h1>
       </div>
@@ -155,16 +155,16 @@ const NavBar = () => {
               variant='ghost'
               className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all
                 ${isActive
-                  ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-lg border-none'
-                  : 'border border-white/60 bg-transparent text-white hover:bg-white/10'}
+                  ? 'bg-gradient-to-r from-orange-700 to-pink-800 text-white shadow-sm border-none'
+                  : 'border border-white/30 bg-transparent text-white hover:bg-white/5'}
               `}
-              style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)' : undefined }}
+              style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.08)' : undefined }}
             >
               {link.icon}
               <span
                 className={
                   isActive
-                    ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg"
+                    ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-pink-400 drop-shadow-sm"
                     : ""
                 }
               >
