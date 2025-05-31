@@ -30,8 +30,12 @@ export const logoutUser = async () => {
 };
 
 // PUT
-export const updateProfile = async (data: { name: string; phone: string }) => {
-  // console.log('Updating profile for userId:', userId, 'with data:', data);
+export const updateProfile = async (data: { 
+  name: string; 
+  phone: string; 
+  profileEmoji: string;
+  userId: string;
+}) => {
   console.log('Updating profile with data:', data);
   const response = await Axios.put(`api/users/update-profile`, data, {
     withCredentials: true,

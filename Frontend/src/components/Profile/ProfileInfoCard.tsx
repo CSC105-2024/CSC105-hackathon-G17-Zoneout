@@ -3,6 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useState } from 'react';
 
+const PROFILE_EMOJIS = [
+  '😄', '🤗', '😜', '🤩', '😁', '😎', '🕺', '🥳'
+
+  
+];
+
 interface UserData {
   id?: string;
   name: string;
@@ -12,6 +18,7 @@ interface UserData {
   posts: number;
   events?: number;
   rating?: number;
+  profileEmoji?: string;
 }
 
 const ProfileInfoCard = ({
@@ -21,17 +28,20 @@ const ProfileInfoCard = ({
 }: {
   user: UserData;
   editable?: boolean;
-  onUpdateProfile?: (data: { name: string; phone: string }) => Promise<void>;
+  onUpdateProfile?: (data: { name: string; phone: string; profileEmoji: string }) => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(user.name);
   const [editPhone, setEditPhone] = useState(user.phone || '');
+  const [editEmoji, setEditEmoji] = useState(user.profileEmoji || '👤');
   const [editError, setEditError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleEdit = () => {
     setEditName(user.name);
     setEditPhone(user.phone || '');
+    setEditEmoji(user.profileEmoji || '👤');
     setEditError('');
     setIsEditing(true);
   };
@@ -39,8 +49,10 @@ const ProfileInfoCard = ({
   const handleCancel = () => {
     setEditName(user.name);
     setEditPhone(user.phone || '');
+    setEditEmoji(user.profileEmoji || '👤');
     setEditError('');
     setIsEditing(false);
+    setShowEmojiPicker(false);
   };
 
   const handleSave = async () => {
@@ -48,9 +60,10 @@ const ProfileInfoCard = ({
     setIsLoading(true);
     try {
       if (onUpdateProfile) {
-        await onUpdateProfile({ name: editName, phone: editPhone });
+        await onUpdateProfile({ name: editName, phone: editPhone, profileEmoji: editEmoji });
       }
       setIsEditing(false);
+      setShowEmojiPicker(false);
     } catch (e) {
       setEditError('Failed to update profile');
     } finally {
@@ -61,8 +74,36 @@ const ProfileInfoCard = ({
   return (
     <Card className='p-8 bg-white/90 backdrop-blur-sm border-4 border-pink-300 rounded-3xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-300'>
       <div className='flex flex-col md:flex-row items-center gap-6'>
-        <div className='w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-xl transform'>
-          <User className='w-16 h-16 text-white' />
+        <div className='relative'>
+          <div 
+            className='w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-xl transform cursor-pointer'
+            onClick={() => isEditing && setShowEmojiPicker(!showEmojiPicker)}
+          >
+            <span className='text-6xl'>{editEmoji}</span>
+            {isEditing && (
+              <div className='absolute -top-2 -right-2 bg-pink-500 rounded-full p-1'>
+                <Edit className='w-4 h-4 text-white' />
+              </div>
+            )}
+          </div>
+          {showEmojiPicker && (
+            <div className='absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white rounded-lg shadow-lg p-8 z-10 border-2 border-pink-300 min-w-[280px]'>
+              <div className='grid grid-cols-4 gap-6'>
+                {PROFILE_EMOJIS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    className='text-3xl hover:scale-125 transition-transform p-4 bg-gray-50 rounded-lg hover:bg-pink-50 flex items-center justify-center w-12 h-12'
+                    onClick={() => {
+                      setEditEmoji(emoji);
+                      setShowEmojiPicker(false);
+                    }}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <div className='flex-1 text-center md:text-left'>
           {/* Name */}

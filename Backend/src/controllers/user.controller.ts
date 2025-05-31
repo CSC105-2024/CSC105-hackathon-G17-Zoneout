@@ -39,7 +39,7 @@ export const getCurrentUserController = async (c: Context) => {
 
   const user = await db.user.findUnique({
     where: { id: Number(cUser.id) },
-    select: { id: true, name: true, email: true, phone: true },
+    select: { id: true, name: true, email: true, phone: true, profileEmoji: true },
   });
 
   if (!user) return c.json(createErrorResponse('User not found'), 404);
@@ -267,9 +267,9 @@ export const updateProfileController = async (c: Context) => {
 
     const userId = user.id;
     const body = await c.req.json<Partial<CreateUserBody>>();
-    const { name, phone } = body;
+    const { name, phone, profileEmoji } = body;
 
-    const response = await updateUser(userId, name, phone);
+    const response = await updateUser(userId, name, phone, profileEmoji);
     if (!response.success) {
       return c.json(createErrorResponse(response.message), 400);
     }
