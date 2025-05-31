@@ -340,8 +340,15 @@ const InteractiveMap = ({ posts }: InteractiveMapProps) => {
           const pos = parseLatLng(post.location);
           const iconContent = iconSVGs[post.icon] || iconSVGs.Coffee || '<circle cx="12" cy="12" r="8" />';
           
+          function handleMarkerClick(post: Post): ((e: google.maps.MapMouseEvent) => void) | undefined {
+            return (e: google.maps.MapMouseEvent) => {
+              e.stop();
+              console.log(post);
+            };
+          }
           return (
             <Marker
+              onClick={handleMarkerClick(post)}
               key={idx}
               position={pos}
               icon={{

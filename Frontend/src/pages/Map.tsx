@@ -7,6 +7,7 @@ import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
 import InteractiveMap from '@/components/App/InteractiveMap';
+import { useNavigate } from 'react-router-dom';
 
 const samplePost = {
   title: 'Study Group: Calculus',
@@ -14,6 +15,7 @@ const samplePost = {
   description:
     "Let's study together for the upcoming calculus exam! Meet at the library at 5pm.",
 };
+
 
 function CreatePostButton({ onClick }: { onClick: () => void }) {
   return (
@@ -46,9 +48,18 @@ const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   // const navigate = useNavigate();
-  const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(samplePost);
+  const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
+  const navigate = useNavigate();
 
+
+  function handleViewProfile() {
+    navigate('/my-profile');
+  }
+  function handleClose() {
+    navigate(-1);
+    setSelectedPost(null);
+  }
   return (
     <div className='min-h-screen relative overflow-hidden'>
       <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
@@ -67,11 +78,8 @@ const MapPage = () => {
       <PostModal
         open={!!selectedPost}
         post={selectedPost}
-        onClose={() => setSelectedPost(null)}
-        onViewProfile={() => {
-          // test: alert or console.log
-          alert('View Profile clicked!');
-        }}
+        onClose={handleClose}
+        onViewProfile={handleViewProfile}
         onJoin={() => {
           alert('Join clicked!');
         }}

@@ -1,7 +1,6 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 
-const PostModal = ({ open, onClose, post, onViewProfile, onJoin }) => {
+const PostModal = ({ open, onClose, post, onViewProfile, onJoin }: { open: boolean, onClose: () => void, post: any, onViewProfile: () => void, onJoin: () => void }) => {
   if (!open || !post) return null;
 
   return (
@@ -9,12 +8,10 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin }) => {
       <div
         className='w-full max-w-md rounded-2xl shadow-2xl p-6 pb-8 mx-4 mb-10 relative animate-slide-up bg-gradient-to-br from-pink-500 to-purple-600'
         style={{
-          background:
-            'linear-gradient(to bottom right, #fde68a, #f9a8d4, #a78bfa)', // matches your --main-bg-gradient
+          background: 'linear-gradient(to bottom right, #fde68a, #f9a8d4, #a78bfa)',
           position: 'relative',
         }}
       >
-        {/* Overlay for readability */}
         <div
           style={{
             position: 'absolute',
@@ -24,9 +21,7 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin }) => {
             zIndex: 0,
           }}
         />
-        {/* Content */}
         <div style={{ position: 'relative', zIndex: 1 }}>
-          {/* Close button */}
           <button
             className='absolute right-4 text-gray-400 hover:text-gray-700 transition-colors text-center px-2'
             onClick={onClose}
@@ -40,16 +35,10 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin }) => {
             <span className='text-2xl font-bold'>x</span>
           </button>
 
-          <h2
-            className='text-2xl font-bold mb-2'
-            style={{ color: 'var(--color-primary)' }}
-          >
+          <h2 className='text-2xl font-bold mb-2' style={{ color: 'var(--color-primary)' }}>
             {post.title}
           </h2>
-          <div
-            className='mb-2 text-sm'
-            style={{ color: 'var(--color-accent-primary)' }}
-          >
+          <div className='mb-2 text-sm' style={{ color: 'var(--color-accent-primary)' }}>
             by <span className='font-semibold'>{post.author}</span>
           </div>
           <div className='mb-6' style={{ color: 'var(--color-primary)' }}>

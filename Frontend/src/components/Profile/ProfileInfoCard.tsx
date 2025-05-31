@@ -1,11 +1,8 @@
 import { User, MapPin, Edit, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useState } from 'react';
-import { userApi } from '@/services/api';
 
 interface UserData {
-  id?: string;  // Optional since mock data doesn't have it
   name: string;
   memberSince: string;
   location: string;
@@ -17,35 +14,11 @@ interface UserData {
 const ProfileInfoCard = ({
   user,
   editable = false,
-  onEdit,
 }: {
   user: UserData;
   editable?: boolean;
   onEdit?: () => void;
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const updateUsername = async (newName: string) => {
-    if (!user.id) {
-      console.error('Cannot update username: No user ID available');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await userApi.updateName(user.id, newName);
-      
-      if (onEdit) {
-        onEdit();
-      }
-    } catch (error) {
-      console.error('Error updating username:', error);
-      // You might want to show an error message to the user here
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <Card className='p-8 bg-white/90 backdrop-blur-sm border-4 border-pink-300 rounded-3xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-300'>
       <div className='flex flex-col md:flex-row items-center gap-6'>
@@ -68,16 +41,12 @@ const ProfileInfoCard = ({
           {editable && (
             <Button
               className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
-              onClick={async () => {
-                const newName = prompt('Enter new username:', user.name);
-                if (newName && newName !== user.name) {
-                  await updateUsername(newName);
-                }
+              onClick={ async () => {
+                
               }}
-              disabled={isLoading}
             >
               <Edit className='w-5 h-5 mr-1' />
-              {isLoading ? 'Updating...' : 'Edit Profile'}
+              Edit Profile
             </Button>
           )}
         </div>
