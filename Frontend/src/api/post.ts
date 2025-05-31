@@ -33,11 +33,34 @@ export const createPost = async (data: CreatePostData) => {
 export const getPosts = async () => {
   console.log('Fetching posts...');
   try {
+    // Log the full request details
+    console.log('Request URL:', '/api/posts');
+    console.log('Request headers:', Axios.defaults.headers);
+    
     const response = await Axios.get('/api/posts');
     console.log('Backend response:', response.data);
     return response.data;
+  } catch (error: any) {
+    // More detailed error logging
+    console.error('Error fetching posts:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      headers: error.response?.headers,
+    });
+    throw error;
+  }
+};
+
+export const getUserPosts = async (userId: string) => {
+  console.log('Fetching user posts for:', userId);
+  try {
+    const response = await Axios.get(`/api/posts/user/${userId}`);
+    console.log('Backend response:', response.data);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching user posts:', error);
     throw error;
   }
 };
