@@ -93,6 +93,7 @@ type InteractiveMapProps = {
 const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+    libraries: ['places', 'geometry']
   });
   const [userLocation, setUserLocation] = useState<{
     lat: number;

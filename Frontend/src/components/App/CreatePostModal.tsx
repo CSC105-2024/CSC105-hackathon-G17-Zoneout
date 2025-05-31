@@ -36,9 +36,9 @@ const IconButton = memo(({ name, icon: Icon, selected, onClick }: { name: string
 ));
 
 const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalProps) => {
-  const { isLoaded } = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places']
+    libraries: ['places', 'geometry']
   });
 
   const [form, setForm] = useState({
@@ -246,6 +246,18 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
     }
   }, [form, onCreatePost, onOpenChange]);
 
+  // Show error if map fails to load
+  if (loadError) {
+    return (
+      <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
+        <div className='bg-white p-4 rounded-lg shadow-lg'>
+          Error loading map. Please refresh the page.
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state
   if (!isLoaded) {
     return (
       <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
@@ -405,6 +417,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                       mapTypeControl: false,
                       streetViewControl: false,
                       fullscreenControl: false,
+                      gestureHandling: 'greedy'
                     }}
                   >
                     {selectedLocation && (
