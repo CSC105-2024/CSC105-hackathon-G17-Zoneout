@@ -39,7 +39,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
     category: '',
     description: '',
     location: '',
-    icon: 'Coffee',
+    icon: '',
   });
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

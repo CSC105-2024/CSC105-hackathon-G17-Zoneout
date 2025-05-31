@@ -23,6 +23,11 @@ const signupSchema = z
       .min(8, '❌ Phone number must be at least 8 digits')
       .max(15, '❌ Phone number too long')
       .regex(/^[0-9]+$/, '❌ Phone number must be digits only'),
+    terms: z.literal(true, {
+      errorMap: () => ({
+        message: '❌ You must accept the terms and conditions',
+      }),
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: '❌ Passwords do not match',
@@ -82,6 +87,28 @@ const SignupForm = ({
         error={errors.phone?.message}
         {...register('phone')}
       />
+      <div className='flex items-center gap-2'>
+        <input
+          type='checkbox'
+          id='terms'
+          {...register('terms')}
+          className='accent-[var(--color-accent-primary)]'
+        />
+        <label htmlFor='terms' className='text-sm'>
+          I accept the{' '}
+          <a
+            href='/terms'
+            className='underline text-[var(--color-accent-primary)]'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Terms and Conditions
+          </a>
+        </label>
+      </div>
+      {errors.terms && (
+        <span className='text-red-600 text-xs'>{errors.terms.message}</span>
+      )}
       <button
         type='submit'
         className='w-full text-white py-2 mt-4'
