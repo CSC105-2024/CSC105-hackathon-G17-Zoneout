@@ -84,7 +84,13 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 };
 
 const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
+<<<<<<< HEAD
 
+=======
+type InteractiveMapProps = {
+  onMarkerClick?: (post: Post) => void;
+};
+>>>>>>> eb2b59addc6dab1f9c4b833160435fbe7819e601
 const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
@@ -251,6 +257,17 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
           const pos = parseLatLng(post.location);
           const iconContent = iconSVGs[post.icon] || iconSVGs.Coffee || '<circle cx="12" cy="12" r="8" />';
           
+<<<<<<< HEAD
+=======
+          function handleMarkerClick(post: Post): ((e: google.maps.MapMouseEvent) => void) | undefined {
+            return (e: google.maps.MapMouseEvent) => {
+              e.stop();
+              if (onMarkerClick) {
+                onMarkerClick(post);
+              }
+            };
+          }
+>>>>>>> eb2b59addc6dab1f9c4b833160435fbe7819e601
           return (
             <Marker
               onClick={() => handleMarkerClick(post)}

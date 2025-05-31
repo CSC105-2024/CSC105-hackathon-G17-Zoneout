@@ -29,6 +29,16 @@ export const logoutUser = async () => {
   return response.data;
 };
 
+// PUT
+export const updateProfile = async (data: { name: string; phone: string }) => {
+  // console.log('Updating profile for userId:', userId, 'with data:', data);
+  console.log('Updating profile with data:', data);
+  const response = await Axios.put(`api/users/update-profile`, data, {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
 // GET
 export const getProfile = async () => {
   const response = await Axios.get('api/users/current', {

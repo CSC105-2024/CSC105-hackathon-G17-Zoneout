@@ -22,8 +22,10 @@ const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Home', icon: <Home className='w-5 h-5 mr-2' />, to: '/' },
-    { label: 'Map', icon: <MapPin className='w-5 h-5 mr-2' />, to: '/map' },
+    { label: 'Home', icon: 
+      <Home className='w-5 h-5' />
+    , to: '/' },
+    { label: 'Map', icon: <MapPin className='w-5 h-5 mr-2 rounded-full border-solid border-2 border-white-800' />, to: '/map' },
     {
       label: 'Safety & Privacy',
       icon: <Shield className='w-5 h-5 mr-2' />,
@@ -39,7 +41,6 @@ const NavBar = () => {
           },
         ]
       : [
-          // Only show if NOT logged in
           {
             label: 'Login',
             icon: <LogIn className='w-5 h-5 mr-2' />,
