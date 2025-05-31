@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { MapPin, X, Coffee, Gamepad, Book, Dumbbell } from 'lucide-react';
+import { MapPin, X, Coffee, Gamepad, Book, Dumbbell, Search } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { createPost } from '@/api/post';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 
 const categories = ['Study Group', 'Food', 'Event', 'Lost & Found', 'Other'];
 
@@ -44,12 +45,113 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
   });
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Default location for Thailand (Bangkok)
+  const DEFAULT_LOCATION = { lat: 13.7563, lng: 100.5018 };
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  }, []);
+
+  // Initialize current location when modal opens
+  useEffect(() => {
+    if (open && !form.location && navigator.geolocation) {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      };
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const newLocation = { lat: latitude, lng: longitude };
+          setSelectedLocation(newLocation);
+          setForm((prev) => ({
+            ...prev,
+            location: `${latitude}, ${longitude}`,
+          }));
+          if (mapRef) {
+            mapRef.panTo(newLocation);
+            mapRef.setZoom(15);
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          // If geolocation fails, use Thailand default
+          setSelectedLocation(DEFAULT_LOCATION);
+          setForm((prev) => ({
+            ...prev,
+            location: `${DEFAULT_LOCATION.lat}, ${DEFAULT_LOCATION.lng}`,
+          }));
+        },
+        options
+      );
+    }
+  }, [open, form.location, mapRef]);
+
+  // Initialize Places Autocomplete
+  useEffect(() => {
+    if (searchInputRef.current && window.google) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(searchInputRef.current, {
+        types: ['geocode', 'establishment'],
+        componentRestrictions: { country: 'th' }, // Changed to Thailand
+        fields: ['geometry', 'formatted_address', 'name']
+      });
+
+      autocompleteRef.current.addListener('place_changed', () => {
+        const place = autocompleteRef.current?.getPlace();
+        if (place?.geometry?.location) {
+          const newLocation = {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng()
+          };
+          
+          setSelectedLocation(newLocation);
+          setForm(prev => ({
+            ...prev,
+            location: `${newLocation.lat}, ${newLocation.lng}`
+          }));
+          
+          if (mapRef) {
+            mapRef.panTo(newLocation);
+            mapRef.setZoom(17);
+          }
+        }
+      });
+    }
+  }, [mapRef]);
+
+  const handleMapClick = useCallback((e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const newLocation = {
+        lat: e.latLng.lat(),
+        lng: e.latLng.lng()
+      };
+      setSelectedLocation(newLocation);
+      setForm(prev => ({
+        ...prev,
+        location: `${newLocation.lat}, ${newLocation.lng}`
+      }));
+      // Clear search input when manually selecting location
+      if (searchInputRef.current) {
+        searchInputRef.current.value = '';
+      }
+      setSearchQuery('');
+    }
+  }, []);
+
+  const handleMapLoad = useCallback((map: google.maps.Map) => {
+    setMapRef(map);
   }, []);
 
   const handleUseCurrentLocation = useCallback(() => {
@@ -60,11 +162,10 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
 
     setLoadingLocation(true);
     
-    // Set a timeout to prevent hanging
     const timeoutId = setTimeout(() => {
       setLoadingLocation(false);
-      toast.error('Location request timed out. Please try again or enter manually.');
-    }, 5000); // 5 second timeout
+      toast.error('Location request timed out. Please try again or select on map.');
+    }, 5000);
 
     const options = {
       enableHighAccuracy: true,
@@ -76,27 +177,33 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       (pos) => {
         clearTimeout(timeoutId);
         const { latitude, longitude } = pos.coords;
+        const newLocation = { lat: latitude, lng: longitude };
+        setSelectedLocation(newLocation);
         setForm((prev) => ({
           ...prev,
           location: `${latitude}, ${longitude}`,
         }));
+        if (mapRef) {
+          mapRef.panTo(newLocation);
+          mapRef.setZoom(15);
+        }
         setLoadingLocation(false);
         toast.success('Location set successfully!');
       },
       (error) => {
         clearTimeout(timeoutId);
         setLoadingLocation(false);
-        let errorMessage = 'Failed to get location. Please enter manually.';
+        let errorMessage = 'Failed to get location. Please select on map.';
         
         switch(error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location permission denied. Please enable location services.';
+            errorMessage = 'Location permission denied. Please select location on map.';
             break;
           case error.POSITION_UNAVAILABLE:
             errorMessage = 'Location information is unavailable.';
             break;
           case error.TIMEOUT:
-            errorMessage = 'Location request timed out. Please try again.';
+            errorMessage = 'Location request timed out. Please select on map.';
             break;
         }
         
@@ -105,7 +212,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       },
       options
     );
-  }, []);
+  }, [mapRef]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -126,30 +233,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       setIsSubmitting(false);
     }
   }, [form, onCreatePost, onOpenChange]);
-
-  useEffect(() => {
-    if (open && !form.location && navigator.geolocation) {
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      };
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          setForm((prev) => ({
-            ...prev,
-            location: `${latitude}, ${longitude}`,
-          }));
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-        },
-        options
-      );
-    }
-  }, [open, form.location]);
 
   if (!open) return null;
 
@@ -253,14 +336,87 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
               />
             </div>
             <div>
-              <label htmlFor='post-location' className='block font-medium mb-1'>
+              <label className='block font-medium mb-1'>
                 Location
               </label>
+              <div className='relative mb-2'>
+                <div className='flex gap-2 items-center mb-2'>
+                  <div className='relative flex-1'>
+                    <Input
+                      ref={searchInputRef}
+                      type='text'
+                      placeholder='Search for a location'
+                      style={{
+                        borderRadius: 'var(--radius)',
+                        background: 'rgba(255,255,255,0.95)',
+                        paddingLeft: '2.5rem',
+                      }}
+                    />
+                    <Search className='w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
+                  </div>
+                  <Button
+                    type='button'
+                    onClick={handleUseCurrentLocation}
+                    disabled={loadingLocation}
+                    className='flex items-center gap-1 px-3 py-2'
+                    style={{
+                      borderRadius: 'var(--radius)',
+                      background: 'var(--color-accent-primary)',
+                      color: '#fff',
+                    }}
+                  >
+                    <MapPin className='w-4 h-4' />
+                    {loadingLocation ? '...' : 'Use Current'}
+                  </Button>
+                </div>
+
+                <div className='h-48 rounded-lg overflow-hidden relative'>
+                  <GoogleMap
+                    mapContainerStyle={{ width: '100%', height: '100%' }}
+                    center={selectedLocation || DEFAULT_LOCATION}
+                    zoom={15}
+                    onClick={handleMapClick}
+                    onLoad={handleMapLoad}
+                    options={{
+                      disableDefaultUI: true,
+                      zoomControl: true,
+                      mapTypeControl: false,
+                      streetViewControl: false,
+                      fullscreenControl: false,
+                    }}
+                  >
+                    {selectedLocation && (
+                      <Marker
+                        position={selectedLocation}
+                        icon={{
+                          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="15" cy="15" r="12" fill="#4285f4" stroke="#ffffff" stroke-width="3"/>
+                              <circle cx="15" cy="15" r="4" fill="#ffffff"/>
+                            </svg>
+                          `),
+                          scaledSize: new window.google.maps.Size(30, 30),
+                          anchor: new window.google.maps.Point(15, 15),
+                        }}
+                      />
+                    )}
+                  </GoogleMap>
+                  {!selectedLocation && (
+                    <div className='absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none'>
+                      <div className='bg-white/90 px-4 py-2 rounded-full flex items-center gap-2'>
+                        <MapPin className='w-4 h-4 text-blue-600' />
+                        <span className='text-sm font-medium'>Search or click to set location</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className='flex gap-2 items-center'>
                 <Input
                   id='post-location'
                   name='location'
-                  placeholder='Location'
+                  placeholder='Location coordinates'
                   value={form.location}
                   onChange={handleChange}
                   required
@@ -269,20 +425,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                     background: 'rgba(255,255,255,0.95)',
                   }}
                 />
-                <Button
-                  type='button'
-                  onClick={handleUseCurrentLocation}
-                  disabled={loadingLocation}
-                  className='flex items-center gap-1 px-3 py-2'
-                  style={{
-                    borderRadius: 'var(--radius)',
-                    background: 'var(--color-accent-primary)',
-                    color: '#fff',
-                  }}
-                >
-                  <MapPin className='w-4 h-4' />
-                  {loadingLocation ? '...' : 'Use Current'}
-                </Button>
               </div>
             </div>
             <div>

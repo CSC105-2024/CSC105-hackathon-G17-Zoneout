@@ -4,6 +4,7 @@ import { Coffee, Gamepad, Book, Dumbbell, LocateFixed } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
 import { getPosts } from '@/api/post';
 import { toast } from 'sonner';
+import PostModal from './PostModal';
 
 // Helper function to convert React icon to SVG string
 const iconToSVG = (IconComponent: any): Promise<string> => {
@@ -65,6 +66,10 @@ type Post = {
   };
 };
 
+interface InteractiveMapProps {
+  onMarkerClick?: (post: Post) => void;
+}
+
 // Helper function to calculate distance between two points in kilometers
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const R = 6371; // Earth's radius in kilometers
@@ -79,9 +84,13 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 };
 
 const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
+<<<<<<< HEAD
+
+=======
 type InteractiveMapProps = {
   onMarkerClick?: (post: Post) => void;
 };
+>>>>>>> eb2b59addc6dab1f9c4b833160435fbe7819e601
 const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
@@ -93,6 +102,8 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [nearbyPosts, setNearbyPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch all posts when component mounts
   useEffect(() => {
@@ -183,6 +194,24 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
     }
   }, [userLocation]);
 
+  const handleMarkerClick = (post: Post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+    if (onMarkerClick) {
+      onMarkerClick(post);
+    }
+  };
+
+  const handleViewProfile = () => {
+    // TODO: Implement view profile functionality
+    console.log('View profile for:', selectedPost?.user?.name);
+  };
+
+  const handleJoin = () => {
+    // TODO: Implement join functionality
+    console.log('Join activity:', selectedPost?.title);
+  };
+
   if (!isLoaded || loading) {
     return (
       <div className='w-full h-full flex items-center justify-center text-gray-400 bg-white/50 rounded-2xl'>
@@ -228,6 +257,8 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
           const pos = parseLatLng(post.location);
           const iconContent = iconSVGs[post.icon] || iconSVGs.Coffee || '<circle cx="12" cy="12" r="8" />';
           
+<<<<<<< HEAD
+=======
           function handleMarkerClick(post: Post): ((e: google.maps.MapMouseEvent) => void) | undefined {
             return (e: google.maps.MapMouseEvent) => {
               e.stop();
@@ -236,9 +267,10 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
               }
             };
           }
+>>>>>>> eb2b59addc6dab1f9c4b833160435fbe7819e601
           return (
             <Marker
-              onClick={handleMarkerClick(post)}
+              onClick={() => handleMarkerClick(post)}
               key={idx}
               position={pos}
               icon={{
@@ -259,6 +291,15 @@ const InteractiveMap = ({ onMarkerClick }: InteractiveMapProps) => {
           );
         })}
       </GoogleMap>
+      
+      {/* Post Modal */}
+      <PostModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        post={selectedPost}
+        onViewProfile={handleViewProfile}
+        onJoin={handleJoin}
+      />
       
       {/* Nearby posts counter */}
       <div className='absolute top-4 left-4 bg-white/80 px-4 py-2 rounded-full shadow-md'>

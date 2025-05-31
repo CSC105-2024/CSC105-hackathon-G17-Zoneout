@@ -39,7 +39,7 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin }: { open: boole
             {post.title}
           </h2>
           <div className='mb-2 text-sm' style={{ color: 'var(--color-accent-primary)' }}>
-            by <span className='font-semibold'>{post.author}</span>
+            by <span className='font-semibold'>{post.user?.name}</span>
           </div>
           <div className='mb-6' style={{ color: 'var(--color-primary)' }}>
             {post.description}
