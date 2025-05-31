@@ -1,8 +1,7 @@
 import SectionCard from './SectionCard';
+import InfoCard from '../InfoCard';
 import { Calendar, Heart, MapPin, Users } from 'lucide-react';
-import { Card } from '../ui/card';
 
-// --- Data ---
 const features = [
   {
     icon: <MapPin className='w-8 h-8' />,
@@ -27,6 +26,7 @@ const features = [
     description: 'Make meaningful friendships and create lasting memories!',
   },
 ];
+
 function FeaturesSection() {
   return (
     <SectionCard>
@@ -35,29 +35,13 @@ function FeaturesSection() {
           Why You'll Love ConnectMap!
         </h3>
         <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8'>
-          {features.map((feature, index) => (
-            <Card
-              key={index}
-              className='p-8 bg-white/90 backdrop-blur-sm border-4 border-[#fde68a] rounded-3xl shadow-2xl transform hover:scale-105 hover:rotate-1 transition-all duration-300'
-            >
-              <div className='text-center'>
-                <div className='w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg transform text-white'>
-                  {feature.icon}
-                </div>
-                <h4
-                  className='text-xl font-black mb-4'
-                  style={{ color: 'var(--color-accent-primary)' }}
-                >
-                  {feature.title}
-                </h4>
-                <p
-                  className=' font-medium'
-                  style={{ color: 'var(--color-accent-secondary)' }}
-                >
-                  {feature.description}
-                </p>
-              </div>
-            </Card>
+          {features.map((feature, idx) => (
+            <InfoCard
+              key={feature.title}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+            />
           ))}
         </div>
       </div>

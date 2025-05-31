@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import NavBar from '@/components/App/NavBar';
 import { Outlet } from 'react-router-dom';
 import DecorativeBackground from './components/DecorativeBackground';
+import Footer from './components/Footer';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const AppLayout = () => (
       {/* Dynamic navigation bar layout based on route and auth state */}
       <Outlet />
       <ReactQueryDevtools />
+      <Footer />
     </div>
   </QueryClientProvider>
 );

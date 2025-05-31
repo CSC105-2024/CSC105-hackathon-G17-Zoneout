@@ -2,18 +2,36 @@ import { guidelines } from '../../services/data';
 
 function GuidelinesSection() {
   return (
-    <section className='bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-12'>
-      <h2 className='text-white text-2xl text-center font-bold mb-6'>
+    <section className='rounded-2xl p-6 mb-12'>
+      <h2
+        className='text-2xl text-center font-bold mb-6'
+        style={{ color: 'var(--color-secondary)' }}
+      >
         Community Safety Guidelines
       </h2>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
         {guidelines.map((item) => (
           <div
             key={item.title}
-            className='bg-white/10 border-l-4 border-purple-600 rounded-xl p-4'
+            className='rounded-xl p-4'
+            style={{
+              background: 'var(--color-card-bg)',
+              borderLeft: '4px solid var(--color-accent-primary)',
+              color: 'var(--color-primary)',
+            }}
           >
-            <h3 className='text-white font-semibold mb-1'>{item.title}</h3>
-            <p className='text-white/80 text-sm'>{item.content}</p>
+            <h3
+              className='font-semibold mb-5'
+              style={{ color: 'var(--color-accent-primary)' }}
+            >
+              {item.title}
+            </h3>
+            <p
+              className='text-sm'
+              style={{ color: 'var(--color-accent-secondary)' }}
+            >
+              {item.content}
+            </p>
           </div>
         ))}
       </div>

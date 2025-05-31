@@ -1,6 +1,6 @@
 function EmergencySection() {
   return (
-    <section className='bg-gradient-to-br from-red-500 to-red-700 rounded-2xl text-white text-center p-6 mb-12'>
+    <section className='bg-gradient-to-br from-[#ed4040] to-[#ed4040] rounded-2xl text-white text-center p-6 mb-12'>
       <h2 className='text-2xl font-bold mb-2'>🚨 Emergency Features</h2>
       <p className='mb-4'>
         In case of emergency during a meetup, these features are always

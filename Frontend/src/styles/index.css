@@ -54,10 +54,20 @@
     #a78bfa
   ); /* yellow-300, pink-300, purple-400 */
   --nav-bg-color: rgba(255, 255, 255, 0.4);
-  --color-primary: #000000;
+  --color-primary: #121212;
   --color-secondary: #ffffff;
   --color-accent-primary: #6b21a8; /* Accent (used as primary in signup/login) */
   --color-accent-secondary: #8427d0; /* Accent (used as secondary in signup/login) */
+  --color-card-bg: rgba(
+    255,
+    255,
+    255,
+    0.6
+  ); /* or #fff9, or any color you want */
+  --color-card-border: #fde68a; /* yellow-300 */
+  --footer-bg-color: transparent;
+  --footer-text-color: #6b21a8;
+  --footer-border-color: #eee;
 
   /* Library CSS */
   --radius: 0.7rem;
