@@ -223,7 +223,6 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
   };
 
   const handleJoin = () => {
-
     console.log('Join activity:', selectedPost?.title);
   };
 

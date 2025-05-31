@@ -7,23 +7,23 @@ const features = [
     icon: <MapPin className='w-8 h-8' />,
     title: 'Find Friends Nearby',
     description:
-      'Discover awesome people in your area who share your interests!',
+     'Anti-loneliness GPS! Detects fellow humans suffering from the "surrounded by people but still lonely" syndrome within a 5km radius.'
   },
   {
     icon: <Users className='w-8 h-8' />,
     title: 'Join Fun Activities',
     description:
-      "Coffee dates, study groups, hiking adventures - there's something for everyone!",
+    "Cure your existential dread with strangers who get it! From silent co-working to loud karaoke - whatever your social battery needs.",
   },
   {
     icon: <Calendar className='w-8 h-8' />,
     title: 'Create Events',
-    description: 'Start your own meetups and bring your community together!',
+    description: 'Host gatherings for people who are tired of feeling invisible in crowds. Small groups, big vibes, zero awkward silence!',
   },
   {
     icon: <Heart className='w-8 h-8' />,
     title: 'Build Connections',
-    description: 'Make meaningful friendships and create lasting memories!',
+    description: 'Solving the "alone together" paradox one meaningful conversation at a time. Because Wi-Fi connections ≠ human connections!',
   },
 ];
 
