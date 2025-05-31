@@ -1,6 +1,11 @@
 import React from 'react';
 
-const ProfileModal = () => {
+interface ProfileModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const ProfileModal: React.FC<ProfileModalProps> = ({ open, onOpenChange }) => {
   return <div>ProfileModal</div>;
 };
 
