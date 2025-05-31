@@ -3,11 +3,18 @@ import ProfileInfoCard from '@/components/Profile/ProfileInfoCard';
 import ActivityHistoryCard from '@/components/Profile/ActivityHistoryCard';
 import { userApi } from '@/services/api';
 import { Button } from '@/components/ui/button';
+import { useLogout } from '@/hooks/use-users';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 const MyProfile = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { mutateAsync: logout, isLoading: isLogoutLoading } = useLogout();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -51,7 +58,12 @@ const MyProfile = () => {
           <ActivityHistoryCard history={[]} />
           <Button
             className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
-            onClick={async () => {}}
+            onClick={async () => {
+              await logout();
+              queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+              navigate('/login');
+            }}
+            disabled={isLogoutLoading}
           >
             Logout
           </Button>

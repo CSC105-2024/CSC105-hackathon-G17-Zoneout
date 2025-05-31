@@ -20,6 +20,15 @@ export const loginUser = async (data: { email: string; password: string }) => {
   return response.data;
 };
 
+export const logoutUser = async () => {
+  const response = await Axios.post(
+    'api/users/logout',
+    {},
+    { withCredentials: true }
+  );
+  return response.data;
+};
+
 // GET
 export const getProfile = async () => {
   const response = await Axios.get('api/users/current', {

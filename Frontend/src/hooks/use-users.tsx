@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { loginUser, signupUser, getProfile } from '@/api/user';
+import { loginUser, signupUser, getProfile, logoutUser } from '@/api/user';
 
 export function useSignup() {
   return useMutation({
@@ -8,7 +8,7 @@ export function useSignup() {
 }
 
 export function useLogin() {
-  return useMutation({mutationFn: loginUser});
+  return useMutation({ mutationFn: loginUser });
 }
 
 export function useCurrentUser() {
@@ -16,5 +16,11 @@ export function useCurrentUser() {
     queryKey: ['currentUser'],
     queryFn: getProfile,
     retry: false,
-  })
+  });
+}
+
+export function useLogout() {
+  return useMutation({
+    mutationFn: logoutUser,
+  });
 }
