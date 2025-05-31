@@ -19,12 +19,12 @@ const InfoCard = ({
   const isCenter = variant === 'center';
   return (
     <Card
-      className={`p-8 bg-white/90 backdrop-blur-sm border-4 border-[var(--color-card-border,#fde68a)] rounded-3xl shadow-2xl ${
+      className={`p-8 bg-white/90 backdrop-blur-sm border-4 border-[#a78bfa] rounded-3xl shadow-2xl ${
         isCenter ? 'text-center' : 'text-left flex items-start gap-6'
       } ${className}`}
       style={{
         background: 'var(--color-card-bg,rgba(255,255,255,0.90))',
-        borderColor: 'var(--color-card-border,#fde68a)',
+        borderColor: '#a78bfa',
         color: 'var(--color-primary,#000)',
       }}
     >

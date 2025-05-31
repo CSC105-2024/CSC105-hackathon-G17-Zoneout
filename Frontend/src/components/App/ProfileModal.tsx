@@ -6,7 +6,7 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ open, onOpenChange }) => {
-  return <div>ProfileModal</div>;
+  return <div></div>;
 };
 
 export default ProfileModal;
