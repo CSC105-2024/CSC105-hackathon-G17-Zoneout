@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-// import { useNavigate } from 'react-router-dom';
 import InteractiveMap from '@/components/App/InteractiveMap';
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
