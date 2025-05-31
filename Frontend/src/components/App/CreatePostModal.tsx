@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -6,7 +6,7 @@ import { MapPin, X, Coffee, Gamepad, Book, Dumbbell, Search } from 'lucide-react
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { createPost } from '@/api/post';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 
 const categories = ['Study Group', 'Food', 'Event', 'Lost & Found', 'Other'];
 
@@ -47,13 +47,10 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+  const [searchBox, setSearchBox] = useState<google.maps.places.Autocomplete | null>(null);
+  const [searchResults, setSearchResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // Default location for Thailand (Bangkok)
-  const DEFAULT_LOCATION = { lat: 13.7563, lng: 100.5018 };
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({
@@ -61,75 +58,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       [e.target.name]: e.target.value,
     }));
   }, []);
-
-  // Initialize current location when modal opens
-  useEffect(() => {
-    if (open && !form.location && navigator.geolocation) {
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      };
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          const newLocation = { lat: latitude, lng: longitude };
-          setSelectedLocation(newLocation);
-          setForm((prev) => ({
-            ...prev,
-            location: `${latitude}, ${longitude}`,
-          }));
-          if (mapRef) {
-            mapRef.panTo(newLocation);
-            mapRef.setZoom(15);
-          }
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          // If geolocation fails, use Thailand default
-          setSelectedLocation(DEFAULT_LOCATION);
-          setForm((prev) => ({
-            ...prev,
-            location: `${DEFAULT_LOCATION.lat}, ${DEFAULT_LOCATION.lng}`,
-          }));
-        },
-        options
-      );
-    }
-  }, [open, form.location, mapRef]);
-
-  // Initialize Places Autocomplete
-  useEffect(() => {
-    if (searchInputRef.current && window.google) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(searchInputRef.current, {
-        types: ['geocode', 'establishment'],
-        componentRestrictions: { country: 'th' }, // Changed to Thailand
-        fields: ['geometry', 'formatted_address', 'name']
-      });
-
-      autocompleteRef.current.addListener('place_changed', () => {
-        const place = autocompleteRef.current?.getPlace();
-        if (place?.geometry?.location) {
-          const newLocation = {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng()
-          };
-          
-          setSelectedLocation(newLocation);
-          setForm(prev => ({
-            ...prev,
-            location: `${newLocation.lat}, ${newLocation.lng}`
-          }));
-          
-          if (mapRef) {
-            mapRef.panTo(newLocation);
-            mapRef.setZoom(17);
-          }
-        }
-      });
-    }
-  }, [mapRef]);
 
   const handleMapClick = useCallback((e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
@@ -142,10 +70,8 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
         ...prev,
         location: `${newLocation.lat}, ${newLocation.lng}`
       }));
-      // Clear search input when manually selecting location
-      if (searchInputRef.current) {
-        searchInputRef.current.value = '';
-      }
+      // Clear search results when manually selecting location
+      setSearchResults([]);
       setSearchQuery('');
     }
   }, []);
@@ -153,6 +79,60 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
   const handleMapLoad = useCallback((map: google.maps.Map) => {
     setMapRef(map);
   }, []);
+
+  const handleSearchBoxLoad = useCallback((autocomplete: google.maps.places.Autocomplete) => {
+    setSearchBox(autocomplete);
+  }, []);
+
+  const handleSearch = useCallback(() => {
+    if (!searchBox || !searchQuery.trim()) return;
+
+    setIsSearching(true);
+    searchBox.getPlacePredictions(
+      {
+        input: searchQuery,
+        types: ['geocode', 'establishment'],
+        componentRestrictions: { country: 'sg' } // Restrict to Singapore
+      },
+      (predictions, status) => {
+        setIsSearching(false);
+        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+          setSearchResults(predictions);
+        } else {
+          setSearchResults([]);
+          toast.error('No locations found. Please try a different search term.');
+        }
+      }
+    );
+  }, [searchBox, searchQuery]);
+
+  const handleSelectLocation = useCallback((placeId: string) => {
+    if (!mapRef) return;
+
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ placeId }, (results, status) => {
+      if (status === 'OK' && results && results[0]) {
+        const location = results[0].geometry.location;
+        const newLocation = {
+          lat: location.lat(),
+          lng: location.lng()
+        };
+        
+        setSelectedLocation(newLocation);
+        setForm(prev => ({
+          ...prev,
+          location: `${newLocation.lat}, ${newLocation.lng}`
+        }));
+        
+        mapRef.panTo(newLocation);
+        mapRef.setZoom(17);
+        
+        // Clear search results and query
+        setSearchResults([]);
+        setSearchQuery('');
+      }
+    });
+  }, [mapRef]);
 
   const handleUseCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -233,6 +213,32 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       setIsSubmitting(false);
     }
   }, [form, onCreatePost, onOpenChange]);
+
+  useEffect(() => {
+    if (open && !form.location && navigator.geolocation) {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      };
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const newLocation = { lat: latitude, lng: longitude };
+          setSelectedLocation(newLocation);
+          setForm((prev) => ({
+            ...prev,
+            location: `${latitude}, ${longitude}`,
+          }));
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+        },
+        options
+      );
+    }
+  }, [open, form.location]);
 
   if (!open) return null;
 
@@ -343,9 +349,11 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                 <div className='flex gap-2 items-center mb-2'>
                   <div className='relative flex-1'>
                     <Input
-                      ref={searchInputRef}
                       type='text'
                       placeholder='Search for a location'
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       style={{
                         borderRadius: 'var(--radius)',
                         background: 'rgba(255,255,255,0.95)',
@@ -356,8 +364,8 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                   </div>
                   <Button
                     type='button'
-                    onClick={handleUseCurrentLocation}
-                    disabled={loadingLocation}
+                    onClick={handleSearch}
+                    disabled={isSearching}
                     className='flex items-center gap-1 px-3 py-2'
                     style={{
                       borderRadius: 'var(--radius)',
@@ -365,15 +373,34 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                       color: '#fff',
                     }}
                   >
-                    <MapPin className='w-4 h-4' />
-                    {loadingLocation ? '...' : 'Use Current'}
+                    {isSearching ? 'Searching...' : 'Search'}
                   </Button>
                 </div>
+
+                {/* Search Results */}
+                {searchResults.length > 0 && (
+                  <div className='absolute z-10 w-full bg-white rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto'>
+                    {searchResults.map((prediction) => (
+                      <button
+                        key={prediction.place_id}
+                        type='button'
+                        className='w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2'
+                        onClick={() => handleSelectLocation(prediction.place_id)}
+                      >
+                        <MapPin className='w-4 h-4 text-blue-600' />
+                        <div>
+                          <div className='font-medium'>{prediction.structured_formatting.main_text}</div>
+                          <div className='text-sm text-gray-500'>{prediction.structured_formatting.secondary_text}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 <div className='h-48 rounded-lg overflow-hidden relative'>
                   <GoogleMap
                     mapContainerStyle={{ width: '100%', height: '100%' }}
-                    center={selectedLocation || DEFAULT_LOCATION}
+                    center={selectedLocation || { lat: 1.3521, lng: 103.8198 }}
                     zoom={15}
                     onClick={handleMapClick}
                     onLoad={handleMapLoad}
@@ -425,6 +452,20 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                     background: 'rgba(255,255,255,0.95)',
                   }}
                 />
+                <Button
+                  type='button'
+                  onClick={handleUseCurrentLocation}
+                  disabled={loadingLocation}
+                  className='flex items-center gap-1 px-3 py-2'
+                  style={{
+                    borderRadius: 'var(--radius)',
+                    background: 'var(--color-accent-primary)',
+                    color: '#fff',
+                  }}
+                >
+                  <MapPin className='w-4 h-4' />
+                  {loadingLocation ? '...' : 'Use Current'}
+                </Button>
               </div>
             </div>
             <div>
