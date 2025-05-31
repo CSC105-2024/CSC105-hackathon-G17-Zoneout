@@ -37,21 +37,22 @@ Axios.interceptors.response.use(
       error.response.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.includes('/login') &&
-      !originalRequest.url.includes('/signup')
+      !originalRequest.url.includes('/signup') &&
+      !originalRequest.url.includes('/refresh-token')
     ) {
       originalRequest._retry = true;
-      if (document.cookie.includes('refreshToken')) {
-        try {
-          await Axios.post(
-            '/api/users/refresh-token',
-            {},
-            { withCredentials: true }
-          );
-          return Axios(originalRequest);
-        } catch (refreshError) {
+      try {
+        await Axios.post(
+          '/api/users/refresh-token',
+          {},
+          { withCredentials: true }
+        );
+        return Axios(originalRequest);
+      } catch (refreshError) {
+        if (window.location.pathname !== '/login') {
           window.location.href = '/login';
-          return Promise.reject(refreshError);
         }
+        return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);
