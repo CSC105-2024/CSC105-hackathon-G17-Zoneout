@@ -65,6 +65,21 @@ type Post = {
   };
 };
 
+// Helper function to calculate distance between two points in kilometers
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+};
+
+const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
+
 const InteractiveMap = () => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
@@ -73,7 +88,8 @@ const InteractiveMap = () => {
   const [zoom, setZoom] = useState(15);
   const mapRef = useRef<google.maps.Map | null>(null);
   const [iconSVGs, setIconSVGs] = useState<{ [key: string]: string }>({});
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [nearbyPosts, setNearbyPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch all posts when component mounts
@@ -95,7 +111,7 @@ const InteractiveMap = () => {
               phone: post.user.phone,
             } : undefined,
           }));
-          setPosts(transformedPosts);
+          setAllPosts(transformedPosts);
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -107,6 +123,23 @@ const InteractiveMap = () => {
 
     fetchAllPosts();
   }, []);
+
+  // Update nearby posts when user location changes
+  useEffect(() => {
+    if (userLocation && allPosts.length > 0) {
+      const nearby = allPosts.filter(post => {
+        const [postLat, postLng] = post.location.split(',').map(Number);
+        const distance = calculateDistance(
+          userLocation.lat,
+          userLocation.lng,
+          postLat,
+          postLng
+        );
+        return distance <= NEARBY_RADIUS_KM;
+      });
+      setNearbyPosts(nearby);
+    }
+  }, [userLocation, allPosts]);
 
   // Pre-generate SVG strings for all icons
   useEffect(() => {
@@ -188,8 +221,8 @@ const InteractiveMap = () => {
           />
         )}
         
-        {/* Post markers with Lucide icons */}
-        {posts.map((post, idx) => {
+        {/* Nearby post markers */}
+        {nearbyPosts.map((post, idx) => {
           const pos = parseLatLng(post.location);
           const iconContent = iconSVGs[post.icon] || iconSVGs.Coffee || '<circle cx="12" cy="12" r="8" />';
           
@@ -215,6 +248,11 @@ const InteractiveMap = () => {
           );
         })}
       </GoogleMap>
+      
+      {/* Nearby posts counter */}
+      <div className='absolute top-4 left-4 bg-white/80 px-4 py-2 rounded-full shadow-md'>
+        <span className='font-medium'>{nearbyPosts.length} posts nearby</span>
+      </div>
       
       {/* Zoom and locate controls */}
       <div className='absolute top-4 right-4 flex flex-col gap-2 z-10'>
