@@ -27,13 +27,20 @@ const mapContainerStyle = {
   minHeight: '500px'
 };
 
-const defaultCenter = {
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+const defaultCenter: LatLng = {
   lat: 0,
   lng: 0
 };
 
 function MapCard() {
-  const [position, setPosition] = useState<google.maps.LatLngLiteral>(defaultCenter);
+  const [position, setPosition] = useState<LatLng>(defaultCenter);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -49,35 +56,57 @@ function MapCard() {
     );
   }, []);
 
+  const handleLoad = () => {
+    setIsLoaded(true);
+  };
+
+  const handleError = (error: Error) => {
+    setLoadError(error.message);
+    console.error('Error loading Google Maps:', error);
+  };
+
+  if (loadError) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <p className="text-red-500">Error loading map: {loadError}</p>
+      </div>
+    );
+  }
+
   return (
     <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
       <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
         <div className='w-full h-full relative z-0'>
-          <LoadScript googleMapsApiKey="AIzaSyAQmuJNjF54qXWO6uNMEKcU0qgo7AOPicA">
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={position}
-              zoom={13}
-              options={{
-                styles: [
-                  {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                  }
-                ],
-                disableDefaultUI: false,
-                zoomControl: true,
-                streetViewControl: true,
-                mapTypeControl: true,
-                fullscreenControl: true
-              }}
-            >
-              <Marker 
-                position={position}
-                animation={google.maps.Animation.DROP}
-              />
-            </GoogleMap>
+          <LoadScript 
+            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}
+            onLoad={handleLoad}
+            onError={handleError}
+          >
+            {isLoaded && (
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={position}
+                zoom={13}
+                options={{
+                  styles: [
+                    {
+                      featureType: "poi",
+                      elementType: "labels",
+                      stylers: [{ visibility: "off" }]
+                    }
+                  ],
+                  disableDefaultUI: false,
+                  zoomControl: true,
+                  streetViewControl: true,
+                  mapTypeControl: true,
+                  fullscreenControl: true
+                }}
+              >
+                <Marker 
+                  position={position}
+                />
+              </GoogleMap>
+            )}
           </LoadScript>
         </div>
       </Card>
@@ -141,4 +170,5 @@ const MapPage = () => {
   );
 };
 
+//getting error here
 export default MapPage;

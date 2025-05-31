@@ -1,5 +1,6 @@
 import { useLoadScript, GoogleMap, Marker, Circle } from '@react-google-maps/api';
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { Users, Activity, BookOpen, PartyPopper } from 'lucide-react';
 
 // Sample post data (replace with your real data source)
 const posts = [
@@ -9,11 +10,11 @@ const posts = [
   { id: 4, type: 'entertainment', position: { lat: 1.354, lng: 103.821 } },
 ];
 
-const markerIcons: { [key: string]: string } = {
-  social: '/icons/social.png',
-  activity: '/icons/activity.png',
-  study: '/icons/study.png',
-  entertainment: '/icons/entertainment.png',
+const markerIcons: { [key: string]: React.ReactNode } = {
+  social: <Users className="w-6 h-6 text-purple-600" />,
+  activity: <Activity className="w-6 h-6 text-blue-600" />,
+  study: <BookOpen className="w-6 h-6 text-green-600" />,
+  entertainment: <PartyPopper className="w-6 h-6 text-orange-600" />,
 };
 
 const InteractiveMap = () => {
@@ -74,16 +75,31 @@ const InteractiveMap = () => {
           />
         )}
         {/* Post markers */}
-        {posts.map(post => (
-          <Marker
-            key={post.id}
-            position={post.position}
-            icon={{
-              url: markerIcons[post.type],
-              scaledSize: new window.google.maps.Size(48, 48),
-            }}
-          />
-        ))}
+        {posts.map(post => {
+          const icon = markerIcons[post.type];
+          return (
+            <Marker
+              key={post.id}
+              position={post.position}
+              label={{
+                text: icon ? '' : post.type.charAt(0).toUpperCase(),
+                color: '#ffffff',
+                fontSize: '14px',
+                fontWeight: 'bold',
+              }}
+              icon={{
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 12,
+                fillColor: post.type === 'social' ? '#9333EA' : 
+                          post.type === 'activity' ? '#2563EB' :
+                          post.type === 'study' ? '#16A34A' : '#EA580C',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 2,
+              }}
+            />
+          );
+        })}
       </GoogleMap>
       {/* Zoom and locate controls */}
       <div className='absolute top-4 right-4 flex flex-col gap-2 z-10'>
