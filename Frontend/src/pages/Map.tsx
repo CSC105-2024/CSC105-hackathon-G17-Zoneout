@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+<<<<<<< HEAD
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+=======
+import InteractiveMap from '@/components/App/InteractiveMap';
+>>>>>>> c50d7ea6f91101cba7c52a9a0d6689e2f44f4fb2
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
