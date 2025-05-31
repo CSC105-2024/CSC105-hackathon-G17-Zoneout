@@ -1,14 +1,11 @@
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Coffee, Gamepad, Book, Dumbbell, LocateFixed } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
 import { getPosts } from '@/api/post';
 import { toast } from 'sonner';
 import PostModal from './PostModal';
 import { Axios } from '@/../axiosInstance';
-
-// Move libraries array outside component to prevent unnecessary reloads
-const GOOGLE_MAPS_LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
 
 // Helper function to convert React icon to SVG string
 const iconToSVG = (IconComponent: any): Promise<string> => {
@@ -99,7 +96,7 @@ type InteractiveMapProps = {
 const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    libraries: GOOGLE_MAPS_LIBRARIES
+    libraries: ['places', 'geometry']
   });
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -113,48 +110,43 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const lastRefreshTrigger = useRef(refreshTrigger);
 
-  // Memoize the fetch function to prevent unnecessary recreations
-  const fetchAllPosts = useCallback(async () => {
-    if (lastRefreshTrigger.current === refreshTrigger) {
-      return; // Skip if refresh trigger hasn't changed
-    }
-    
-    setLoading(true);
-    try {
-      const response = await getPosts();
-      if (response.success) {
-        const transformedPosts = response.data.map((post: any) => ({
-          id: post.id,
-          title: post.content.split('\n')[0],
-          description: post.content,
-          category: post.category,
-          location: `${post.latitude}, ${post.longitude}`,
-          icon: 'Coffee',
-          user: post.user
-            ? {
-                name: post.user.name,
-                email: post.user.email,
-                phone: post.user.phone,
-              }
-            : undefined,
-        }));
-        setAllPosts(transformedPosts);
-        lastRefreshTrigger.current = refreshTrigger;
-      }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast.error('Failed to fetch posts');
-    } finally {
-      setLoading(false);
-    }
-  }, [refreshTrigger]);
-
-  // Fetch posts when component mounts or refreshTrigger changes
+  // Fetch all posts when component mounts or refreshTrigger changes
   useEffect(() => {
+    const fetchAllPosts = async () => {
+      setLoading(true); // Set loading to true before fetching
+      try {
+        const response = await getPosts();
+        if (response.success) {
+          // Transform backend post format to frontend format
+          const transformedPosts = response.data.map((post: any) => ({
+            id: post.id,
+            title: post.content.split('\n')[0], // First line as title
+            description: post.content,
+            category: post.category,
+            location: `${post.latitude}, ${post.longitude}`,
+            icon: 'Coffee',
+            user: post.user
+              ? {
+                  name: post.user.name,
+                  email: post.user.email,
+                  phone: post.user.phone,
+                }
+              : undefined,
+          }));
+          setAllPosts(transformedPosts);
+          console.log('Posts updated:', transformedPosts); // Debug log
+        }
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        toast.error('Failed to fetch posts');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAllPosts();
-  }, [fetchAllPosts]);
+  }, [refreshTrigger]); // Add refreshTrigger as a dependency
 
   // Update nearby posts when user location or allPosts changes
   useEffect(() => {
@@ -170,8 +162,14 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
         return distance <= NEARBY_RADIUS_KM;
       });
       setNearbyPosts(nearby);
+      console.log('Nearby posts updated:', nearby); // Debug log
     }
   }, [userLocation, allPosts]);
+
+  // Force a re-render when refreshTrigger changes
+  useEffect(() => {
+    console.log('Refresh trigger changed:', refreshTrigger); // Debug log
+  }, [refreshTrigger]);
 
   // Pre-generate SVG strings for all icons
   useEffect(() => {
