@@ -8,6 +8,7 @@ import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
 import InteractiveMap from '@/components/App/InteractiveMap';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentUser } from '@/hooks/use-users';
 
 const samplePost = {
   title: 'Study Group: Calculus',
@@ -52,6 +53,7 @@ const MapPage = () => {
   );
   const [posts, setPosts] = useState<any[]>([]);
   const navigate = useNavigate();
+  const { data: user } = useCurrentUser();
 
   function handleViewProfile() {
     navigate('/my-profile');
@@ -67,7 +69,9 @@ const MapPage = () => {
           <InteractiveMap posts={posts} />
         </Card>
       </div>
-      <CreatePostButton onClick={() => setShowCreatePost(true)} />
+      {user?.data && (
+        <CreatePostButton onClick={() => setShowCreatePost(true)} />
+      )}
       {/* <PostsNearbyCounter count={posts.length} /> */}
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
       <CreatePostModal
