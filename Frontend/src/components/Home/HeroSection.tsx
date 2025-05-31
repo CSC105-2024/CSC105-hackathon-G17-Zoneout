@@ -23,12 +23,12 @@ function HeroSection({ onExplore }: { onExplore: () => void }) {
               Start Exploring!
             </span>
           </Button>
-          <Button
+          {/* <Button
             variant='outline'
             className='bg-white/20 backdrop-blur-sm border-4 border-white/60 text-white hover:bg-purple-800/30 px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300'
           >
             Learn More
-          </Button>
+          </Button> */}
         </div>
       </div>
     </SectionCard>
