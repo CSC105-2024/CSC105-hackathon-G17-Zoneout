@@ -52,6 +52,9 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Default location for Thailand (Bangkok)
+  const DEFAULT_LOCATION = { lat: 13.7563, lng: 100.5018 };
+
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({
       ...prev,
@@ -59,12 +62,49 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
     }));
   }, []);
 
+  // Initialize current location when modal opens
+  useEffect(() => {
+    if (open && !form.location && navigator.geolocation) {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      };
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const newLocation = { lat: latitude, lng: longitude };
+          setSelectedLocation(newLocation);
+          setForm((prev) => ({
+            ...prev,
+            location: `${latitude}, ${longitude}`,
+          }));
+          if (mapRef) {
+            mapRef.panTo(newLocation);
+            mapRef.setZoom(15);
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          // If geolocation fails, use Thailand default
+          setSelectedLocation(DEFAULT_LOCATION);
+          setForm((prev) => ({
+            ...prev,
+            location: `${DEFAULT_LOCATION.lat}, ${DEFAULT_LOCATION.lng}`,
+          }));
+        },
+        options
+      );
+    }
+  }, [open, form.location, mapRef]);
+
   // Initialize Places Autocomplete
   useEffect(() => {
     if (searchInputRef.current && window.google) {
       autocompleteRef.current = new window.google.maps.places.Autocomplete(searchInputRef.current, {
         types: ['geocode', 'establishment'],
-        componentRestrictions: { country: 'sg' },
+        componentRestrictions: { country: 'th' }, // Changed to Thailand
         fields: ['geometry', 'formatted_address', 'name']
       });
 
@@ -333,7 +373,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                 <div className='h-48 rounded-lg overflow-hidden relative'>
                   <GoogleMap
                     mapContainerStyle={{ width: '100%', height: '100%' }}
-                    center={selectedLocation || { lat: 1.3521, lng: 103.8198 }}
+                    center={selectedLocation || DEFAULT_LOCATION}
                     zoom={15}
                     onClick={handleMapClick}
                     onLoad={handleMapLoad}
