@@ -75,7 +75,10 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { o
                 onClick={onDelete}
                 style={{ borderRadius: 'var(--radius)' }}
               >
-                <Trash/>
+                <span className='flex items-center gap-2'>
+                  <Trash/>
+                  Delete
+                </span>
               </Button>
             )}
           </div>

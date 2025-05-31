@@ -58,13 +58,12 @@ const MapPage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Memoize the create post handler to prevent unnecessary recreations
-  const handleCreatePost = useCallback(async (postData: CreatePostData) => {
+  const handleCreatePost = async (postData: CreatePostData) => {
     try {
       setLoading(true);
       const response = await createPost(postData);
       if (response.success) {
-        // Increment refresh trigger to force a re-fetch
+        // Immediately increment refresh trigger
         setRefreshTrigger(prev => prev + 1);
         toast.success('Post created successfully!');
         setShowCreatePost(false);
@@ -75,12 +74,7 @@ const MapPage = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  // Handle marker click
-  const handleMarkerClick = useCallback((post: Post) => {
-    setSelectedPost(post);
-  }, []);
+  };
 
   return (
     <div className='min-h-screen relative overflow-hidden'>
@@ -88,7 +82,7 @@ const MapPage = () => {
         <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
           <InteractiveMap 
             refreshTrigger={refreshTrigger}
-            onMarkerClick={handleMarkerClick}
+            onMarkerClick={(post) => setSelectedPost(post)} 
           />
         </Card>
       </div>

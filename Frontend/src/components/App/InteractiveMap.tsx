@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 import PostModal from './PostModal';
 import { Axios } from '@/../axiosInstance';
 
-// Helper function to convert React icon to SVG string
 const iconToSVG = (IconComponent: any): Promise<string> => {
   return new Promise((resolve) => {
     // Create a temporary div
@@ -27,20 +26,15 @@ const iconToSVG = (IconComponent: any): Promise<string> => {
         fill='none'
       />
     );
-
-    // Give React time to render, then extract the SVG
     setTimeout(() => {
       const svgElement = tempDiv.querySelector('svg');
       if (svgElement) {
-        // Get the inner content (paths, circles, etc.) without the svg wrapper
+
         const innerHTML = svgElement.innerHTML;
         resolve(innerHTML);
       } else {
-        // Fallback
         resolve('<circle cx="12" cy="12" r="8" />');
       }
-
-      // Cleanup
       root.unmount();
       document.body.removeChild(tempDiv);
     }, 10);
@@ -59,7 +53,7 @@ type Post = {
   title: string;
   category: string;
   description: string;
-  location: string; // 'lat, lng'
+  location: string;
   icon: string;
   user?: {
     name: string;
@@ -229,7 +223,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
   };
 
   const handleJoin = () => {
-    // TODO: Implement join functionality
+
     console.log('Join activity:', selectedPost?.title);
   };
 
@@ -244,7 +238,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
         toast.error(response.data.msg || 'Failed to delete post');
       }
     } catch (error) {
-      toast.error('Failed to delete post. Please try again.');
+      toast.error(`This is ${selectedPost?.user?.name}'s post.`);
       console.error(error);
     }
   };
