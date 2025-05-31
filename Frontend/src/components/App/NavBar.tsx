@@ -12,32 +12,44 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useCurrentUser } from '@/hooks/use-users';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = null; // Replace with useAuth hook
+  const { data: user, isLoading } = useCurrentUser();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
     { label: 'Home', icon: <Home className='w-5 h-5 mr-2' />, to: '/' },
-    { label: 'Login', icon: <LogIn className='w-5 h-5 mr-2' />, to: '/login' },
-    {
-      label: 'Sign Up',
-      icon: <UserPlus className='w-5 h-5 mr-2' />,
-      to: '/signup',
-    },
     { label: 'Map', icon: <MapPin className='w-5 h-5 mr-2' />, to: '/map' },
     {
       label: 'Safety & Privacy',
       icon: <Shield className='w-5 h-5 mr-2' />,
       to: '/safety-privacy',
     },
-    {
-      label: 'Profile',
-      icon: <User className='w-5 h-5 mr-2' />,
-      to: '/my-profile',
-    },
+    // Only show if logged in
+    ...(user
+      ? [
+          {
+            label: 'Profile',
+            icon: <User className='w-5 h-5 mr-2' />,
+            to: '/my-profile',
+          },
+        ]
+      : [
+          // Only show if NOT logged in
+          {
+            label: 'Login',
+            icon: <LogIn className='w-5 h-5 mr-2' />,
+            to: '/login',
+          },
+          {
+            label: 'Sign Up',
+            icon: <UserPlus className='w-5 h-5 mr-2' />,
+            to: '/signup',
+          },
+        ]),
   ];
 
   const handleNav = (to) => {

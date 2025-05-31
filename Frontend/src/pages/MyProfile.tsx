@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import ProfileInfoCard from '@/components/Profile/ProfileInfoCard';
 import ActivityHistoryCard from '@/components/Profile/ActivityHistoryCard';
 import { userApi } from '@/services/api';
+import { Button } from '@/components/ui/button';
 
 const MyProfile = () => {
   const [user, setUser] = useState<any>(null);
@@ -48,6 +49,12 @@ const MyProfile = () => {
             }}
           />
           <ActivityHistoryCard history={[]} />
+          <Button
+            className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
+            onClick={async () => {}}
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </div>
