@@ -6,6 +6,7 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
+import InteractiveMap from '@/components/App/InteractiveMap';
 
 const samplePost = {
   title: 'Study Group: Calculus',
