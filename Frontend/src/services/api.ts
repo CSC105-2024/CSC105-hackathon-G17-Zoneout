@@ -7,7 +7,7 @@ const api = axios.create({
 
 export const userApi = {
   getCurrentUser: () => api.get('/users/current'),
-  login: (data: { email: string; password: string }) => 
+  login: (data: { email: string; password: string }) =>
     api.post('/users/login', data),
   updateProfile: (userId: string, data: { name?: string; phone?: string }) =>
     api.put(`/users/${userId}/update-profile`, data),
@@ -17,4 +17,4 @@ export const userApi = {
     api.put(`/users/${userId}/update-phone`, { phone }),
 };
 
-export default api; 
+export default api;

@@ -32,7 +32,7 @@ const NavBar = () => {
     },
     {
       label: 'Safety & Privacy',
-      icon: <Shield className='w-5 h-5 mr-2 text-black' />,
+      icon: <Shield className='w-5 h-5 mr-2' />,
       to: '/safety-privacy',
     },
     // Only show if logged in
@@ -40,19 +40,19 @@ const NavBar = () => {
       ? [
           {
             label: 'Profile',
-            icon: <User className='w-5 h-5 mr-2 text-black' />,
+            icon: <User className='w-5 h-5 mr-2 ' />,
             to: '/my-profile',
           },
         ]
       : [
           {
             label: 'Login',
-            icon: <LogIn className='w-5 h-5 mr-2 text-black' />,
+            icon: <LogIn className='w-5 h-5 mr-2 ' />,
             to: '/login',
           },
           {
             label: 'Sign Up',
-            icon: <UserPlus className='w-5 h-5 mr-2 text-black' />,
+            icon: <UserPlus className='w-5 h-5 mr-2 ' />,
             to: '/signup',
           },
         ]),
@@ -89,25 +89,31 @@ const NavBar = () => {
           <div className='flex-1 overflow-y-auto p-4'>
             <div className='flex flex-col gap-2'>
               {navLinks.map((link) => {
-                const isActive = link.label === 'Map';
+                const isActive = location.pathname === link.to;
                 return (
                   <Button
                     key={link.label}
                     onClick={() => handleNav(link.to)}
                     variant='ghost'
-                    className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start
-                      ${isActive
-                        ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none'
-                        : 'border border-white/60 bg-transparent text-white hover:bg-white/10'}
+                    className={` flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start cursor-pointer
+                      ${
+                        isActive
+                          ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none hover:text-white'
+                          : 'border border-white/60 bg-transparent hover:bg-black/10'
+                      }
                     `}
-                    style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)' : undefined }}
+                    style={{
+                      boxShadow: isActive
+                        ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)'
+                        : undefined,
+                    }}
                   >
                     {link.icon}
                     <span
                       className={
                         isActive
-                          ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg"
-                          : ""
+                          ? 'bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg'
+                          : ''
                       }
                     >
                       {link.label}
@@ -139,33 +145,39 @@ const NavBar = () => {
             className='w-full h-full object-cover'
           />
         </div>
-        <h1 className='text-4xl font-black text-white drop-shadow-lg -skew-x-6 bg-gradient-to-r from-pink-600 to-purple-700 bg-clip-text text-transparent'>
+        <h1 className='text-2xl lg:text-4xl font-black text-purple-500 drop-shadow-lg -skew-x-6 '>
           ZONEOUT
         </h1>
       </div>
 
       {/* Desktop Nav */}
-      <div className="hidden md:flex items-center gap-8 h-14">
+      <div className='hidden md:flex items-center gap-4 lg:gap-8 h-14'>
         {navLinks.map((link) => {
-          const isActive = link.label === 'Map';
+          const isActive = location.pathname === link.to;
           return (
             <Button
               key={link.label}
               onClick={() => navigate(link.to)}
               variant='ghost'
-              className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all
-                ${isActive
-                  ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-lg border-none'
-                  : 'border border-white/60 bg-transparent text-white hover:bg-white/10'}
+              className={`flex items-center gap-1 lg:gap-2 px-8 py-2 rounded-full font-bold md:text-sm lg:text-base transition-all cursor-pointer
+                ${
+                  isActive
+                    ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none hover:text-white'
+                    : 'border-1 border-purple-800 bg-transparent hover:bg-white/20'
+                }
               `}
-              style={{ boxShadow: isActive ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)' : undefined }}
+              style={{
+                boxShadow: isActive
+                  ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)'
+                  : undefined,
+              }}
             >
               {link.icon}
               <span
                 className={
                   isActive
-                    ? "bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg"
-                    : ""
+                    ? 'bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg'
+                    : ''
                 }
               >
                 {link.label}
