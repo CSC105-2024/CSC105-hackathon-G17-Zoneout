@@ -3,13 +3,25 @@ import type { Next } from 'hono';
 import jwt from 'jsonwebtoken';
 import { getCookie } from 'hono/cookie';
 
+declare module 'hono' {
+  interface ContextVariableMap {
+    user: {
+      id: string;
+      email: string;
+    };
+  }
+}
 export const authenticateToken = async (c: Context, next: Next) => {
   try {
     let token: string | undefined;
+
+    // 1. Try Authorization header
     const authHeader = c.req.header('Authorization');
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
     }
+
+    // 2. If not found, try HttpOnly cookie
     if (!token) {
       token = getCookie(c, 'accessToken');
     }
