@@ -80,7 +80,7 @@ const PostModal = ({
             >
               Contact {post.user?.name}
             </Button>
-            <Button
+            {/* <Button
               className='font-bold'
               onClick={onJoin}
               style={{
@@ -90,7 +90,7 @@ const PostModal = ({
               }}
             >
               Interested
-            </Button>
+            </Button> */}
             {onDelete && (
               <Button
                 className='font-bold bg-red-500 hover:bg-red-600 text-white flex items-center gap-2'
