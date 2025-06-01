@@ -20,11 +20,11 @@ function CTASection({ onMap }: { onMap: () => void }) {
         </p>
         <Button
           onClick={onMap}
-          className='bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60 max-w-2xl '
+          className='bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 max-w-2xl cursor-pointer'
         >
           <span className='flex items-center gap-2'>
             <MapPin className='inline' />
-            Read & Agree the Guidelines
+            Open the Map Now!
           </span>
         </Button>
       </Card>
