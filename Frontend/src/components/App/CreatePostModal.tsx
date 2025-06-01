@@ -391,7 +391,7 @@ const CreatePostModal = ({ open, onOpenChange, setRefreshTrigger, refreshTrigger
                     />
                     <Search className='w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
                   </div>
-                  <Button
+                  {/* <Button
                     type='button'
                     onClick={handleUseCurrentLocation}
                     disabled={loadingLocation}
@@ -404,7 +404,7 @@ const CreatePostModal = ({ open, onOpenChange, setRefreshTrigger, refreshTrigger
                   >
                     <MapPin className='w-4 h-4' />
                     {loadingLocation ? '...' : 'Use Current'}
-                  </Button>
+                  </Button> */}
                 </div>
 
                 <div className='h-48 rounded-lg overflow-hidden relative'>

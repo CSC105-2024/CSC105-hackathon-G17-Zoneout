@@ -67,6 +67,7 @@ const MapPage = () => {
           <InteractiveMap
             refreshTrigger={refreshTrigger}
             onMarkerClick={(post) => setSelectedPost(post)}
+            isLoaded={true}
           />
         </Card>
       </div>
@@ -77,17 +78,6 @@ const MapPage = () => {
         onOpenChange={setShowCreatePost}
         refreshTrigger={refreshTrigger}
         setRefreshTrigger={setRefreshTrigger}
-      />
-      <PostModal
-        open={!!selectedPost}
-        post={selectedPost}
-        onClose={() => setSelectedPost(null)}
-        onViewProfile={() => {
-          navigate('/profile');
-        }}
-        onJoin={() => {
-          alert('Join clicked!');
-        }}
       />
     </div>
   );

@@ -167,26 +167,24 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
   }, [refreshTrigger]);
 
   // Pre-generate SVG strings for all icons
-  // useEffect(() => {
-  //   const generateIconSVGs = async () => {
-  //     const svgs: { [key: string]: string } = {};
+  useEffect(() => {
+    const generateIconSVGs = async () => {
+      const svgs: { [key: string]: string } = {};
 
-  //     for (const [key, IconComponent] of Object.entries(iconMap)) {
-  //       try {
-  //         svgs[key] = await iconToSVG(IconComponent);
-  //       } catch (error) {
-  //         console.warn(`Failed to generate SVG for ${key}:`, error);
-  //         svgs[key] = '<circle cx="12" cy="12" r="8" />'; // Fallback
-  //       }
-  //     }
+      for (const [key, IconComponent] of Object.entries(iconMap)) {
+        try {
+          svgs[key] = await iconToSVG(IconComponent);
+        } catch (error) {
+          console.warn(`Failed to generate SVG for ${key}:`, error);
+          svgs[key] = await iconToSVG(Ghost); // Use Ghost as fallback
+        }
+      }
 
-  //     setIconSVGs(svgs);
-  //   };
+      setIconSVGs(svgs);
+    };
 
-  //   if (isLoaded) {
-  //     generateIconSVGs();
-  //   }
-  // }, [isLoaded]);
+    generateIconSVGs();
+  }, []); // Remove isLoaded dependency since we want to generate icons once on mount
 
   // Track user location
   useEffect(() => {
@@ -294,7 +292,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
           const iconContent =
             iconSVGs[post.icon] ||
             iconSVGs.Ghost ||
-            '<circle cx="12" cy="12" r="8" />';
+            iconSVGs.Ghost; // Use Ghost as fallback instead of async call
 
           return (
             <Marker
