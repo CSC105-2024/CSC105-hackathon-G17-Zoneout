@@ -2,7 +2,6 @@ import { User, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useState } from 'react';
-import logo2 from '@/assets/logo2.png';
 
 const PROFILE_EMOJIS = ['😄', '🤗', '😜', '🤩', '😁', '😎', '🕺', '🥳'];
 
@@ -130,7 +129,6 @@ const ProfileInfoCard = ({
           </p> */}
           {/* Location */}
           <div className='flex items-center justify-center md:justify-start gap-2 mb-4'>
-            <img src={logo2} alt="Logo" className='w-5 h-5 object-contain' />
             <span className='text-lg text-purple-600 font-medium'>
               {user.location}
             </span>
