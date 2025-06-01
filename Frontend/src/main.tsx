@@ -16,7 +16,7 @@ import TermsPage from './pages/TermsPage';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />, // Main layout component
+    element: <AppLayout />,
     children: [
       { path: '', element: <HomePage /> },
       { path: 'map', element: <MapPage /> },
