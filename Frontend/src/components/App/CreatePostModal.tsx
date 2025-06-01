@@ -465,7 +465,7 @@ const CreatePostModal = ({ open, onOpenChange, setRefreshTrigger, refreshTrigger
                 />
               </div>
             </div>
-            <div>
+            {/* <div>
               <label className='block font-medium mb-1'>Icon</label>
               <div className='flex gap-4 mb-2'>
                 {iconOptions.map(({ name, icon: Icon }) => (
@@ -478,19 +478,13 @@ const CreatePostModal = ({ open, onOpenChange, setRefreshTrigger, refreshTrigger
                   />
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
           <div className='flex justify-end gap-2 mt-4 px-8 pb-8'>
             <Button
               type='submit'
-              className='font-bold'
+              className='bg-gradient-to-r from-pink-400 to-pink-600 text-white font-bold px-8 py-4 rounded-full shadow-lg'
               disabled={isSubmitting}
-              style={{
-                borderRadius: 'var(--radius)',
-                background: 'var(--color-accent-primary)',
-                color: '#fff',
-              }}
-              
             >
               {isSubmitting ? 'Creating...' : 'Create'}
             </Button>

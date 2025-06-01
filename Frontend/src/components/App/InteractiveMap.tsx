@@ -176,7 +176,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
           svgs[key] = await iconToSVG(IconComponent);
         } catch (error) {
           console.warn(`Failed to generate SVG for ${key}:`, error);
-          svgs[key] = await iconToSVG(Ghost); // Use Ghost as fallback
+          svgs[key] = await iconToSVG(Ghost)
         }
       }
 
