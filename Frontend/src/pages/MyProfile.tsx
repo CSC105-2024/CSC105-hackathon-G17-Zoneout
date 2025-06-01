@@ -34,7 +34,11 @@ const MyProfile = () => {
   if (isLoading) return <div>Loading...</div>;
   if (error || !user?.data) return <div>Error: Failed to fetch user data</div>;
 
-  console.log('post dat', postsData);
+  const userWithPosts = {
+    ...user.data,
+    posts: postsData?.data?.length || 0,
+    memberSince: new Date(user.data.createdAt).toLocaleDateString(),
+  };
 
   return (
     <div
@@ -47,7 +51,7 @@ const MyProfile = () => {
       <div className='container mx-auto px-6 relative z-10'>
         <div className='max-w-4xl mx-auto space-y-8'>
           <ProfileInfoCard
-            user={user.data}
+            user={userWithPosts}
             editable
             onUpdateProfile={handleUpdateProfile}
           />
