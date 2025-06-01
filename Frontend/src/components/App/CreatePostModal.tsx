@@ -6,7 +6,7 @@ import { MapPin, X, Coffee, Gamepad, Book, Dumbbell, Search } from 'lucide-react
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { createPost } from '@/api/post';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
 
 const categories = ['Study Group', 'Food', 'Event', 'Lost & Found', 'Other'];
 
@@ -20,8 +20,8 @@ const iconOptions = [
 type CreatePostModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreatePost: (post: any) => void;
-  isLoaded: boolean;
+  setRefreshTrigger: React.Dispatch<React.SetStateAction<number>>;
+  refreshTrigger: number;
 };
 
 // Memoize the icon buttons to prevent unnecessary re-renders
@@ -35,11 +35,14 @@ const IconButton = memo(({ name, icon: Icon, selected, onClick }: { name: string
     <Icon className='w-7 h-7' />
   </button>
 ));
-// const [userLocation, setUserLocation] = useState<{
-//   lat: number;
-//   lng: number;
-// } | null>(null);
-const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreatePostModalProps) => {
+
+const CreatePostModal = ({ open, onOpenChange, setRefreshTrigger, refreshTrigger }: CreatePostModalProps) => {
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+    libraries: ['places', 'geometry']
+  });
+  console.log(typeof setRefreshTrigger);
+
   const [form, setForm] = useState({
     title: '',
     category: '',
@@ -102,6 +105,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreateP
       toast.error('Failed to initialize location search. Please try again.');
     }
   }, [isLoaded, mapRef]);
+
   // Initialize current location when modal opens
   useEffect(() => {
     if (!isLoaded || !open || form.location) return;
@@ -224,13 +228,13 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreateP
     );
   }, [mapRef]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
       const response = await createPost(form);
+      console.log(response.success);
       if (response.success) {
-        await onCreatePost(response.data);
         onOpenChange(false);
         toast.success('Post created successfully!');
       } else {
@@ -241,10 +245,22 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreateP
       toast.error('Failed to create post. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setRefreshTrigger(prev => prev + 1);
     }
-  }, [form, onCreatePost, onOpenChange]);
+  };
 
   // Show error if map fails to load
+  if (loadError) {
+    return (
+      <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
+        <div className='bg-white p-4 rounded-lg shadow-lg'>
+          Error loading map. Please refresh the page.
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state
   if (!isLoaded) {
     return (
       <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
@@ -375,6 +391,20 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreateP
                     />
                     <Search className='w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
                   </div>
+                  <Button
+                    type='button'
+                    onClick={handleUseCurrentLocation}
+                    disabled={loadingLocation}
+                    className='flex items-center gap-1 px-3 py-2'
+                    style={{
+                      borderRadius: 'var(--radius)',
+                      background: 'var(--color-accent-primary)',
+                      color: '#fff',
+                    }}
+                  >
+                    <MapPin className='w-4 h-4' />
+                    {loadingLocation ? '...' : 'Use Current'}
+                  </Button>
                 </div>
 
                 <div className='h-48 rounded-lg overflow-hidden relative'>
@@ -435,6 +465,20 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreateP
                 />
               </div>
             </div>
+            <div>
+              <label className='block font-medium mb-1'>Icon</label>
+              <div className='flex gap-4 mb-2'>
+                {iconOptions.map(({ name, icon: Icon }) => (
+                  <IconButton
+                    key={name}
+                    name={name}
+                    icon={Icon}
+                    selected={form.icon === name}
+                    onClick={() => setForm((prev) => ({ ...prev, icon: name }))}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
           <div className='flex justify-end gap-2 mt-4 px-8 pb-8'>
             <Button
@@ -468,4 +512,4 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreateP
   );
 };
 
-export default memo(CreatePostModal);
+export default CreatePostModal;

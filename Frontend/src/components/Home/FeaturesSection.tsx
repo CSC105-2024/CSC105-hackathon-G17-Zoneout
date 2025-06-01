@@ -1,16 +1,16 @@
 import SectionCard from './SectionCard';
 import InfoCard from '../InfoCard';
-import { Calendar, Heart, MapPin, Users } from 'lucide-react';
+import {  Footprints,Ghost, Calendar, Heart } from 'lucide-react';
 
 const features = [
   {
-    icon: <MapPin className='w-8 h-8' />,
+    icon: <Ghost className='w-8 h-8' />,
     title: 'Find Friends Nearby',
     description:
       'Anti-loneliness GPS! Detects fellow humans suffering from the "surrounded by people but still lonely" syndrome within a 5km radius.',
   },
   {
-    icon: <Users className='w-8 h-8' />,
+    icon: <Footprints className='w-8 h-8' />,
     title: 'Join Fun Activities',
     description:
       'Cure your existential dread with strangers who get it! From silent co-working to loud karaoke - whatever your social battery needs.',
