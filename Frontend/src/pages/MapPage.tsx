@@ -9,6 +9,7 @@ import PostModal from '@/components/App/PostModal';
 import { createPost, getPosts, CreatePostData } from '@/api/post';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentUser } from '@/hooks/use-users';
 
 type Post = {
   id: number;
@@ -53,6 +54,8 @@ function PostsNearbyCounter({ count }: { count: number }) {
 // --- Main Page ---
 
 const MapPage = () => {
+  const { data: user, isLoading, error } = useCurrentUser();
+
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -71,8 +74,9 @@ const MapPage = () => {
           />
         </Card>
       </div>
-      <CreatePostButton onClick={() => setShowCreatePost(true)} />
+      {user && <CreatePostButton onClick={() => setShowCreatePost(true)} />}
       <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
+
       <CreatePostModal
         open={showCreatePost}
         onOpenChange={setShowCreatePost}
