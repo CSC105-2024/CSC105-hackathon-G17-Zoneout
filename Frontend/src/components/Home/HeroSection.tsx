@@ -13,12 +13,12 @@ function HeroSection() {
   return (
     <SectionCard className='py-20 text-center'>
       <div className='max-w-4xl mx-auto'>
-        <h2 className='text-6xl font-black text-white mb-6 drop-shadow-lg transform hover:scale-105 transition-transform duration-300'>
-          Connect with Amazing People Near You!
+        <h2 className='text-6xl font-black text-purple-500 mb-6 drop-shadow-lg transform hover:scale-105 transition-transform duration-300'>
+          Zoneout Together With Strangers!
         </h2>
-        <p className='text-2xl text-white/90 mb-12 font-bold drop-shadow-md'>
-          Join the most fun and friendly community platform where making friends
-          is an adventure!
+        <p className='text-2xl text-gray/30 mb-12 font-bold drop-shadow-md'>
+          Join the platform to find nearby people, events, and opportunities to
+          connect whether you're new, a local, or solo traveler.
         </p>
         <div className='flex flex-col sm:flex-row gap-6 justify-center '>
           <Button
