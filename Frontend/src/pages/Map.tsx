@@ -20,13 +20,12 @@ const samplePost = {
 
 function CreatePostButton({ onClick }: { onClick: () => void }) {
   return (
-    <div className='fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xl px-4'>
+    <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50'>
       <Button
         onClick={onClick}
-        className='w-full flex items-center justify-center bg-gradient-to-r from-green-300 via-blue-400 to-purple-400 border-[5px] border-white/60 rounded-full shadow-2xl text-2xl font-extrabold text-white px-8 py-4 gap-4 backdrop-blur-sm'
-        style={{letterSpacing: '0.01em'}}
+        className='bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-green-500 hover:via-blue-600 hover:to-purple-700 text-white px-10 py-4 rounded-full shadow-2xl text-xl font-black transform hover:scale-110 transition-all duration-300 border-4 animate-pulse'
       >
-        <Plus className='w-7 h-7' strokeWidth={2.5} />
+        <Plus className='w-6 h-6 mr-3' />
         CREATE NEW POST
       </Button>
     </div>
@@ -63,7 +62,7 @@ const MapPage = () => {
 
   return (
     <div className='min-h-screen relative overflow-hidden bg-gray-50'>
-      <div className='relative h-[calc(100vh-100px)] mx-4 md:mx-8 mb-16 mt-2'>
+      <div className='relative h-[calc(100vh-80px)] mx-4 md:mx-8 mb-4 mt-2'>
         <Card className='h-full w-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
           <InteractiveMap isLoaded={isLoaded} />
         </Card>
