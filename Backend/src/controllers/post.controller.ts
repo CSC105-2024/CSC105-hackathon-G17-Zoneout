@@ -17,15 +17,8 @@ export const createPost = async (c: Context) => {
     const body = await c.req.json<CreatePostBody>();
     const user = c.get('user');
 
-    const {
-      content,
-      latitude,
-      longitude,
-      category,
-      isEvent,
-      icon,
-      expiresAt,
-    } = body;
+    const { content, latitude, longitude, category, isEvent, icon, expiresAt } =
+      body;
 
     if (!content || !latitude || !longitude || !category || !expiresAt) {
       return c.json(
@@ -102,17 +95,17 @@ export const getPostsByUser = async (c: Context) => {
 
 type EditPostBody = {
   content?: string;
-  latitude?: number;
-  longitude?: number;
   category?: string;
-  isEvent?: boolean;
   expiresAt?: string;
 };
 
 export const editPost = async (c: Context) => {
   try {
+    console.log('Editing post...', c.req.param('postId'));
     const postId = Number(c.req.param('postId'));
     const body = await c.req.json<EditPostBody>();
+    console.log('Editing body...', body);
+
     const user = c.get('user');
 
     if (isNaN(postId)) {
@@ -123,7 +116,7 @@ export const editPost = async (c: Context) => {
     }
 
     const posts = await postModel.getPostsByUserId(Number(user.id));
-    const postToEdit = posts.find(post => post.id === postId);
+    const postToEdit = posts.find((post) => post.id === postId);
 
     if (!postToEdit) {
       return c.json(
@@ -164,7 +157,7 @@ export const deletePost = async (c: Context) => {
 
     // First get the post to check ownership
     const posts = await postModel.getPostsByUserId(Number(user.id));
-    const postToDelete = posts.find(post => post.id === postId);
+    const postToDelete = posts.find((post) => post.id === postId);
 
     if (!postToDelete) {
       return c.json(
@@ -218,4 +211,4 @@ export const getAllPosts = async (c: Context) => {
       500
     );
   }
-}; 
+};

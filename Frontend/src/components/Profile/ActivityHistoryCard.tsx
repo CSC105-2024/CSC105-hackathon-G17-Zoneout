@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Calendar, MapPin } from 'lucide-react';
+import { Button } from '../ui/button';
+import { editPost } from '@/api/post';
+import { useCurrentUser } from '@/hooks/use-users';
+import { useQueryClient } from '@tanstack/react-query';
 
 const getTypeColor = (type: string) => {
   switch (type.toLowerCase()) {
@@ -25,8 +29,31 @@ function formatDate(dateStr: string) {
 }
 
 const ActivityHistoryCard = ({ history }: { history: any[] }) => {
+  const queryClient = useQueryClient();
+  const { data: user } = useCurrentUser();
   const [showAll, setShowAll] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editFields, setEditFields] = useState<any>({});
   const displayHistory = showAll ? history : history.slice(0, 5);
+
+  // Dummy save handler, replace with API call
+  const handleSave = async (activityId: number) => {
+    try {
+      console.log('Saving activity:', activityId, editFields);
+      // Only send editable fields
+      const payload: any = {
+        content: editFields.content,
+        createdAt: editFields.createdAt,
+        expiresAt: editFields.expiresAt,
+      };
+
+      await editPost(activityId, payload);
+      setEditingId(null);
+      queryClient.invalidateQueries(['currentUser']);
+    } catch (e) {
+      alert('Failed to update post');
+    }
+  };
 
   return (
     <Card className='p-8 bg-white/90 backdrop-blur-sm border-4 border-purple-300 rounded-3xl shadow-2xl'>
@@ -49,6 +76,8 @@ const ActivityHistoryCard = ({ history }: { history: any[] }) => {
         )}
         {displayHistory.map((activity) => {
           const isExpired = new Date(activity.expiresAt) < new Date();
+          const isEditing = editingId === activity.id;
+
           return (
             <Card
               key={activity.id}
@@ -56,25 +85,106 @@ const ActivityHistoryCard = ({ history }: { history: any[] }) => {
             >
               <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
                 <div className='flex-1'>
-                  <h4 className='text-xl font-black text-purple-800 mb-2'>
-                    {activity.content}
-                  </h4>
+                  {/* Editable Content */}
+                  {isEditing ? (
+                    <input
+                      className='text-xl font-black text-purple-800 mb-2 w-full border-b'
+                      value={editFields.content ?? activity.content}
+                      onChange={(e) =>
+                        setEditFields((f) => ({
+                          ...f,
+                          content: e.target.value,
+                        }))
+                      }
+                    />
+                  ) : (
+                    <h4 className='text-xl font-black text-purple-800 mb-2'>
+                      {activity.content}
+                    </h4>
+                  )}
                   <div className='flex flex-wrap items-center gap-4 text-sm'>
                     <span className='flex items-center gap-1 text-purple-600 font-medium'>
                       <Calendar className='w-4 h-4' />
-                      {formatDate(activity.createdAt)}
+                      {/* Editable Start Time */}
+                      {isEditing ? (
+                        <input
+                          type='datetime-local'
+                          className='border rounded px-1'
+                          value={
+                            editFields.createdAt ??
+                            activity.createdAt.slice(0, 16)
+                          }
+                          onChange={(e) =>
+                            setEditFields((f) => ({
+                              ...f,
+                              createdAt: e.target.value,
+                            }))
+                          }
+                        />
+                      ) : (
+                        formatDate(activity.createdAt)
+                      )}
                     </span>
+                    {/* Location (not editable) */}
                     <span className='flex items-center gap-1 text-purple-600 font-medium'>
                       <MapPin className='w-4 h-4' />
                       {activity.latitude.toFixed(4)},{' '}
                       {activity.longitude.toFixed(4)}
                     </span>
+                    {/* Editable ExpiresAt */}
                     <span className='flex items-center gap-1 text-purple-600 font-medium'>
-                      Expires: {formatDate(activity.expiresAt)}
+                      Expires:{' '}
+                      {isEditing && !isExpired ? (
+                        <input
+                          type='datetime-local'
+                          className='border rounded px-1'
+                          value={
+                            editFields.expiresAt ??
+                            activity.expiresAt.slice(0, 16)
+                          }
+                          onChange={(e) =>
+                            setEditFields((f) => ({
+                              ...f,
+                              expiresAt: e.target.value,
+                            }))
+                          }
+                        />
+                      ) : (
+                        formatDate(activity.expiresAt)
+                      )}
                     </span>
                   </div>
                 </div>
                 <div className='flex items-center gap-3'>
+                  {isEditing ? (
+                    <>
+                      <Button
+                        onClick={() => handleSave(activity.id)}
+                        className='bg-green-500 text-white'
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={() => setEditingId(null)}
+                        className='bg-gray-300'
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setEditingId(activity.id);
+                        setEditFields({
+                          content: activity.content,
+                          createdAt: activity.createdAt.slice(0, 16),
+                          expiresAt: activity.expiresAt.slice(0, 16),
+                        });
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  )}
                   <span
                     className={`px-4 py-2 rounded-full text-sm font-bold border-2 ${getTypeColor(
                       activity.category

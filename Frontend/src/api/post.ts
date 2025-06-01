@@ -44,7 +44,7 @@ export const getPosts = async () => {
     // Log the full request details
     console.log('Request URL:', '/api/posts');
     console.log('Request headers:', Axios.defaults.headers);
-    
+
     const response = await Axios.get('/api/posts');
     console.log('Backend response:', response.data);
     return response.data;
@@ -71,4 +71,11 @@ export const getUserPosts = async (userId: string) => {
     console.error('Error fetching user posts:', error);
     throw error;
   }
+};
+
+export const editPost = async (postId: number, data: any) => {
+  const response = await Axios.put(`/api/posts/edit-post/${postId}`, data, {
+    withCredentials: true,
+  });
+  return response.data;
 };

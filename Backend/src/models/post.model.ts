@@ -62,15 +62,11 @@ const editPost = async (
   postId: number,
   {
     content,
-    latitude,
-    longitude,
     category,
     isEvent,
     expiresAt,
   }: {
     content?: string;
-    latitude?: number;
-    longitude?: number;
     category?: string;
     isEvent?: boolean;
     expiresAt?: Date;
@@ -80,10 +76,7 @@ const editPost = async (
     where: { id: postId },
     data: {
       content,
-      latitude,
-      longitude,
       category,
-      isEvent,
       expiresAt,
     },
   });
@@ -97,4 +90,4 @@ const deletePost = async (postId: number) => {
   return await db.post.delete({ where: { id: postId } });
 };
 
-export { deletePost }; 
+export { deletePost };
