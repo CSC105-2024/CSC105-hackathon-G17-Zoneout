@@ -1,4 +1,4 @@
-import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
 import { Coffee, Gamepad, Book, Dumbbell, LocateFixed, User, Ghost } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
@@ -88,12 +88,9 @@ const NEARBY_RADIUS_KM = 5; // Show posts within 5km radius
 type InteractiveMapProps = {
   onMarkerClick?: (post: Post) => void;
   refreshTrigger?: number;
+  isLoaded: boolean;
 };
-const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapProps) => {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places', 'geometry']
-  });
+const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0, isLoaded }: InteractiveMapProps) => {
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;

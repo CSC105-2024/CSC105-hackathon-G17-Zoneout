@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LoadScript } from '@react-google-maps/api';
+import { useLoadScript } from '@react-google-maps/api';
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
@@ -42,6 +42,12 @@ const MapPage = () => {
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
 
+  // Load Google Maps API once here
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries: GOOGLE_MAP_LIBRARIES as any,
+  });
+
   function handleViewProfile() {
     navigate('/my-profile');
   }
@@ -49,37 +55,38 @@ const MapPage = () => {
     navigate(-1);
     setSelectedPost(null);
   }
+
+  if (loadError) {
+    return <div>Error loading map. Please refresh the page.</div>;
+  }
+
   return (
-    <LoadScript
-      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-      libraries={GOOGLE_MAP_LIBRARIES}
-    >
-      <div className='min-h-screen relative overflow-hidden'>
-        <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
-          <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-            <InteractiveMap posts={posts} />
-          </Card>
-        </div>
-        {user?.data && (
-          <CreatePostButton onClick={() => setShowCreatePost(true)} />
-        )}
-        <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
-        <CreatePostModal
-          open={showCreatePost}
-          onOpenChange={setShowCreatePost}
-          onCreatePost={(post) => setPosts((prev) => [...prev, post])}
-        />
-        <PostModal
-          open={!!selectedPost}
-          post={selectedPost}
-          onClose={handleClose}
-          onViewProfile={handleViewProfile}
-          onJoin={() => {
-            alert('Join clicked!');
-          }}
-        />
+    <div className='min-h-screen relative overflow-hidden'>
+      <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
+        <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
+          <InteractiveMap isLoaded={isLoaded} />
+        </Card>
       </div>
-    </LoadScript>
+      {user?.data && (
+        <CreatePostButton onClick={() => setShowCreatePost(true)} />
+      )}
+      <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
+      <CreatePostModal
+        open={showCreatePost}
+        onOpenChange={setShowCreatePost}
+        onCreatePost={(post) => setPosts((prev) => [...prev, post])}
+        isLoaded={isLoaded}
+      />
+      <PostModal
+        open={!!selectedPost}
+        post={selectedPost}
+        onClose={handleClose}
+        onViewProfile={handleViewProfile}
+        onJoin={() => {
+          alert('Join clicked!');
+        }}
+      />
+    </div>
   );
 };
 

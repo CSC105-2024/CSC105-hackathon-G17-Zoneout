@@ -6,7 +6,7 @@ import { MapPin, X, Coffee, Gamepad, Book, Dumbbell, Search } from 'lucide-react
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { createPost } from '@/api/post';
-import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 
 const categories = ['Study Group', 'Food', 'Event', 'Lost & Found', 'Other'];
 
@@ -21,6 +21,7 @@ type CreatePostModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreatePost: (post: any) => void;
+  isLoaded: boolean;
 };
 
 // Memoize the icon buttons to prevent unnecessary re-renders
@@ -38,12 +39,7 @@ const IconButton = memo(({ name, icon: Icon, selected, onClick }: { name: string
 //   lat: number;
 //   lng: number;
 // } | null>(null);
-const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalProps) => {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places', 'geometry']
-  });
-
+const CreatePostModal = ({ open, onOpenChange, onCreatePost, isLoaded }: CreatePostModalProps) => {
   const [form, setForm] = useState({
     title: '',
     category: '',
@@ -249,17 +245,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
   }, [form, onCreatePost, onOpenChange]);
 
   // Show error if map fails to load
-  if (loadError) {
-    return (
-      <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
-        <div className='bg-white p-4 rounded-lg shadow-lg'>
-          Error loading map. Please refresh the page.
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading state
   if (!isLoaded) {
     return (
       <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
