@@ -41,6 +41,16 @@ const getPostsByUserId = async (userId: number) => {
   const posts = await db.post.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profileEmoji: true,
+        },
+      },
+    },
   });
 
   return posts;

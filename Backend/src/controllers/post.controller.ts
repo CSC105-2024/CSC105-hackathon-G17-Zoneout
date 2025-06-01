@@ -7,6 +7,7 @@ type CreatePostBody = {
   latitude: number;
   longitude: number;
   category: string;
+  icon: string;
   isEvent?: boolean;
   expiresAt: string;
 };
@@ -22,6 +23,7 @@ export const createPost = async (c: Context) => {
       longitude,
       category,
       isEvent,
+      icon,
       expiresAt,
     } = body;
 
@@ -42,6 +44,7 @@ export const createPost = async (c: Context) => {
       latitude,
       longitude,
       category,
+      icon,
       isEvent,
       expiresAt: new Date(expiresAt),
     });
@@ -66,7 +69,6 @@ export const createPost = async (c: Context) => {
 export const getPostsByUser = async (c: Context) => {
   try {
     const userId = Number(c.req.param('userId'));
-    const user = c.get('user');
 
     if (isNaN(userId)) {
       return c.json(
@@ -76,18 +78,6 @@ export const getPostsByUser = async (c: Context) => {
           msg: 'Invalid user ID',
         },
         400
-      );
-    }
-
-    // Optional: Check if user is requesting their own posts or has permission
-    if (Number(user.id) !== userId) {
-      return c.json(
-        {
-          success: false,
-          data: null,
-          msg: 'Not authorized to view these posts',
-        },
-        403
       );
     }
 

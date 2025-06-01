@@ -24,7 +24,7 @@ function GuidelinesSection() {
               className='font-semibold mb-5'
               style={{ color: 'var(--color-accent-primary)' }}
             >
-              {item.title}
+              <span className="text-xl">{item.title}</span>
             </h3>
             <p
               className='text-sm'

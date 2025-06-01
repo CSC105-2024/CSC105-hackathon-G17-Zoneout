@@ -6,6 +6,7 @@ import { getPosts } from '@/api/post';
 import { toast } from 'sonner';
 import PostModal from './PostModal';
 import { Axios } from '@/../axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const iconToSVG = (IconComponent: any): Promise<string> => {
   return new Promise((resolve) => {
@@ -59,6 +60,7 @@ type Post = {
     name: string;
     email: string;
     phone?: string;
+    id: number;
   };
 };
 
@@ -104,6 +106,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch all posts when component mounts or refreshTrigger changes
   useEffect(() => {
@@ -125,6 +128,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
                   name: post.user.name,
                   email: post.user.email,
                   phone: post.user.phone,
+                  id: post.user.id,
                 }
               : undefined,
           }));
@@ -218,8 +222,9 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
   };
 
   const handleViewProfile = () => {
-    // TODO: Implement view profile functionality
-    console.log('View profile for:', selectedPost?.user?.name);
+    if (selectedPost?.user?.id) {
+      navigate(`/profile/${selectedPost.user.id}`);
+    }
   };
 
   const handleJoin = () => {

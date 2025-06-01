@@ -66,10 +66,11 @@ const PostModal = ({
           <div className='mb-6' style={{ color: 'var(--color-primary)' }}>
             {post.description}
           </div>
-          <div className='flex gap-3'>
+          <div className='flex items-center justify-between gap-3 w-full'>
             <Button
               variant='outline'
               onClick={onViewProfile}
+              className='flex-1'
               style={{
                 borderRadius: 'var(--radius)',
                 background: 'rgba(255,255,255,0.95)',
@@ -77,7 +78,7 @@ const PostModal = ({
                 border: '1px solid var(--color-accent-primary)',
               }}
             >
-              View Profile
+              Contact {post.user?.name}
             </Button>
             <Button
               className='font-bold'
@@ -92,14 +93,12 @@ const PostModal = ({
             </Button>
             {onDelete && (
               <Button
-                className='font-bold bg-red-500 hover:bg-red-600 text-white'
+                className='font-bold bg-red-500 hover:bg-red-600 text-white flex items-center gap-2'
                 onClick={onDelete}
                 style={{ borderRadius: 'var(--radius)' }}
               >
-                <span className='flex items-center gap-2'>
-                  <Trash />
-                  Delete
-                </span>
+                <Trash className='w-4 h-4' />
+                Delete
               </Button>
             )}
           </div>

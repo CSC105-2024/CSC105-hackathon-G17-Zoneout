@@ -243,16 +243,21 @@ export const refreshTokenController = async (c: Context) => {
 
     if (!refreshToken) return c.json({ error: 'No refresh token' }, 401);
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const jwtSecret = process.env.JWT_SECRET as string;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET is not defined');
+    }
+
+    const decoded = jwt.verify(refreshToken, jwtSecret);
     // Generate new tokens
     const newAccessToken = jwt.sign(
       { id: decoded.id, email: decoded.email, name: decoded.name },
-      process.env.JWT_SECRET,
-      { expiresIn: '30m' }
+      jwtSecret,
+      { expiresIn: '15m' }
     );
     const newRefreshToken = jwt.sign(
       { id: decoded.id },
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: '7d' }
     );
     setCookie(c, 'accessToken', newAccessToken, { httpOnly: true, path: '/' });
@@ -365,6 +370,35 @@ export const updateUsernameController = async (c: Context) => {
     );
   } catch (error) {
     console.error('Update name error:', error);
+    return c.json(createErrorResponse('Internal server error'), 500);
+  }
+};
+
+export const getUserByIdController = async (c: Context) => {
+  try {
+    const userId = c.req.param('userId');
+    if (!userId) {
+      return c.json(createErrorResponse('User ID is required'), 400);
+    }
+
+    const user = await db.user.findUnique({
+      where: { id: Number(userId) },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        profileEmoji: true,
+      },
+    });
+
+    if (!user) {
+      return c.json(createErrorResponse('User not found'), 404);
+    }
+
+    return c.json(createSuccessResponse(user, 'User retrieved successfully'));
+  } catch (error) {
+    console.error('Error in getUserByIdController:', error);
     return c.json(createErrorResponse('Internal server error'), 500);
   }
 };

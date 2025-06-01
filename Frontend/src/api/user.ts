@@ -50,3 +50,11 @@ export const getProfile = async () => {
   });
   return response.data;
 };
+
+// GET user profile by ID
+export const getUserProfile = async (userId: string) => {
+  const response = await Axios.get(`api/users/${userId}`, {
+    withCredentials: true,
+  });
+  return response.data;
+};

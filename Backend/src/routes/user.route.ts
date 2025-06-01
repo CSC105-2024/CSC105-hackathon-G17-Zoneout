@@ -14,6 +14,13 @@ userRouter.get(
   authenticateToken,
   userController.getCurrentUserController
 );
+
+userRouter.get(
+  '/:userId',
+  authenticateToken,
+  userController.getUserByIdController
+);
+
 userRouter.put(
   '/:userId/update-phone',
   authenticateToken,
@@ -29,12 +36,6 @@ userRouter.put(
   '/update-profile',
   authenticateToken,
   userController.updateProfileController
-);
-
-userRouter.get(
-  '/current',
-  authenticateToken,
-  userController.getCurrentUserController
 );
 
 export { userRouter };

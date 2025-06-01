@@ -446,7 +446,7 @@ return (
     <GradientOverlay />
     
     <MapLegend>
-      <LegendTitle>🗺️ MAP LEGEND</LegendTitle>
+      <LegendTitle><span className="text-xl">🗺️</span> MAP LEGEND</LegendTitle>
       {user && (
         <div style={{ marginBottom: '10px', color: '#8a2be2' }}>
           Welcome, {user.name}!
@@ -454,35 +454,35 @@ return (
       )}
       <LegendItem>
         <LegendColor color="#ff6b9d" />
-        <span>👥 Social Meetups</span>
+        <span><span className="text-xl">👥</span> Social Meetups</span>
       </LegendItem>
       <LegendItem>
         <LegendColor color="#4ecdc4" />
-        <span>🏃 Activities</span>
+        <span><span className="text-xl">🏃</span> Activities</span>
       </LegendItem>
       <LegendItem>
         <LegendColor color="#ffa726" />
-        <span>📚 Study & Support</span>
+        <span><span className="text-xl">📚</span> Study & Support</span>
       </LegendItem>
       <LegendItem>
         <LegendColor color="#ab47bc" />
-        <span>🎮 Entertainment</span>
+        <span><span className="text-xl">🎮</span> Entertainment</span>
       </LegendItem>
-      <LegendNote>Click any marker to join the fun! 🎉</LegendNote>
+      <LegendNote>Click any marker to join the fun! <span className="text-xl">🎉</span></LegendNote>
     </MapLegend>
 
     <CustomControls>
       <ControlButton onClick={zoomIn}>+</ControlButton>
       <ControlButton onClick={zoomOut}>−</ControlButton>
-      <ControlButton onClick={centerMap}>📍</ControlButton>
+      <ControlButton onClick={centerMap}><span className="text-xl">📍</span></ControlButton>
       <ControlButton onClick={() => setUseCanvasIcons(!useCanvasIcons)}>
-        {useCanvasIcons ? '🖼️' : '📐'}
+        {useCanvasIcons ? <span className="text-xl">🖼️</span> : <span className="text-xl">📐</span>}
       </ControlButton>
     </CustomControls>
 
     <ActionBar>
       <ActionButton variant="create">+ CREATE NEW POST</ActionButton>
-      <ActionButton variant="posts">😊 5 POSTS NEARBY!</ActionButton>
+      <ActionButton variant="posts"><span className="text-xl">😊</span> 5 POSTS NEARBY!</ActionButton>
     </ActionBar>
   </MapContainer>
 );

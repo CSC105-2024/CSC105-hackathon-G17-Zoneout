@@ -8,7 +8,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <HeroSection onExplore={() => navigate('/map')} />
+      <HeroSection onMap={() => navigate('/safety-privacy')} />
       <FeaturesSection />
       <CTASection onMap={() => navigate('/map')} />
     </div>

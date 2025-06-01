@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 
 interface InfoCardProps {
-  icon: React.ReactNode;
+  icon: React.ReactNode | string;
   title: string;
   description: string;
   variant?: 'center' | 'left';
@@ -33,7 +33,11 @@ const InfoCard = ({
           isCenter ? 'mx-auto' : 'flex-shrink-0'
         }`}
       >
-        {icon}
+        {typeof icon === 'string' ? (
+          <span className="text-2xl">{icon}</span>
+        ) : (
+          icon
+        )}
       </div>
       <div>
         <h4
