@@ -64,11 +64,27 @@ export const getPosts = async () => {
 export const getUserPosts = async (userId: string) => {
   console.log('Fetching user posts for:', userId);
   try {
+    if (!userId) {
+      console.error('No userId provided to getUserPosts');
+      return { success: false, data: [], msg: 'No userId provided' };
+    }
+    
     const response = await Axios.get(`/api/posts/user/${userId}`);
-    console.log('Backend response:', response.data);
+    console.log('Backend response for user posts:', response.data);
+    
+    if (!response.data.success) {
+      console.error('Backend returned error:', response.data.msg);
+      return { success: false, data: [], msg: response.data.msg };
+    }
+    
     return response.data;
-  } catch (error) {
-    console.error('Error fetching user posts:', error);
+  } catch (error: any) {
+    console.error('Error fetching user posts:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+    });
     throw error;
   }
 };

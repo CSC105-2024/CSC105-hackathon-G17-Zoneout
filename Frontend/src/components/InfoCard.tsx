@@ -29,7 +29,7 @@ const InfoCard = ({
       }}
     >
       <div
-        className={`w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mb-6 shadow-lg text-white ${
+        className={`w-16 h-16 bg-gradient-to-br from-amber-200 via-pink-300 to-purple-300 rounded-full flex items-center justify-center mb-6 shadow-lg text-white ${
           isCenter ? 'mx-auto' : 'flex-shrink-0'
         }`}
       >

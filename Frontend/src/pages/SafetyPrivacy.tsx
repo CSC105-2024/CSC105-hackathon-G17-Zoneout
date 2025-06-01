@@ -14,7 +14,7 @@ export default function SafetyPrivacyPage() {
             Your Safety is Our Priority
           </h1>
           <p className='text-gray/90 max-w-2xl mx-auto text-lg'>
-            ConnectMap is built with comprehensive safety and privacy features
+            Zoneout is built with comprehensive privacy features
             to ensure you can explore, connect, and create meaningful
             relationships with complete peace of mind.
           </p>
