@@ -7,7 +7,7 @@ function EmergencySection() {
         available:
       </p>
       <button className='bg-white text-red-600 px-6 py-3 rounded-full font-bold text-lg mt-2 mb-4'>
-        Emergency Contact
+        itswarframetime@gmail.com
       </button>
       <div className='text-sm space-y-1'>
         <p>• Quick access to local emergency services</p>
