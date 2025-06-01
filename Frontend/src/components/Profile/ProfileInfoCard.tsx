@@ -3,11 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useState } from 'react';
 
-const PROFILE_EMOJIS = [
-  '😄', '🤗', '😜', '🤩', '😁', '😎', '🕺', '🥳'
-
-  
-];
+const PROFILE_EMOJIS = ['😄', '🤗', '😜', '🤩', '😁', '😎', '🕺', '🥳'];
 
 interface UserData {
   id?: string;
@@ -28,7 +24,11 @@ const ProfileInfoCard = ({
 }: {
   user: UserData;
   editable?: boolean;
-  onUpdateProfile?: (data: { name: string; phone: string; profileEmoji: string }) => Promise<void>;
+  onUpdateProfile?: (data: {
+    name: string;
+    phone: string;
+    profileEmoji: string;
+  }) => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(user.name);
@@ -60,7 +60,11 @@ const ProfileInfoCard = ({
     setIsLoading(true);
     try {
       if (onUpdateProfile) {
-        await onUpdateProfile({ name: editName, phone: editPhone, profileEmoji: editEmoji });
+        await onUpdateProfile({
+          name: editName,
+          phone: editPhone,
+          profileEmoji: editEmoji,
+        });
       }
       setIsEditing(false);
       setShowEmojiPicker(false);
@@ -75,7 +79,7 @@ const ProfileInfoCard = ({
     <Card className='p-8 bg-white/90 backdrop-blur-sm border-4 border-pink-300 rounded-3xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-300'>
       <div className='flex flex-col md:flex-row items-center gap-6'>
         <div className='relative'>
-          <div 
+          <div
             className='w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-xl transform cursor-pointer'
             onClick={() => isEditing && setShowEmojiPicker(!showEmojiPicker)}
           >
@@ -120,9 +124,9 @@ const ProfileInfoCard = ({
             </h2>
           )}
           {/* Member Since */}
-          <p className='text-xl text-purple-600 mb-3'>
+          {/* <p className='text-xl text-purple-600 mb-3'>
             Community Explorer since {user.memberSince}
-          </p>
+          </p> */}
           {/* Location */}
           {/* <div className='flex items-center justify-center md:justify-start gap-2 mb-4'>
             <MapPin className='w-5 h-5 text-purple-500' />
@@ -137,8 +141,16 @@ const ProfileInfoCard = ({
               <input
                 className='border rounded px-2 py-1'
                 value={editPhone}
-                onChange={(e) => setEditPhone(e.target.value)}
+                onChange={(e) => {
+                  // Only allow digits
+                  const value = e.target.value.replace(/\D/g, '');
+                  setEditPhone(value);
+                }}
                 disabled={isLoading}
+                type='tel'
+                inputMode='numeric'
+                pattern='[0-9]*'
+                maxLength={15} // optional: limit length
               />
             ) : (
               <span>{user.phone || '-'}</span>

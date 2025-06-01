@@ -25,9 +25,7 @@ const NavBar = () => {
     { label: 'Home', icon: <Home className='w-5 h-5' />, to: '/' },
     {
       label: 'Map',
-      icon: (
-        <MapPin className='w-5 h-5 mr-2 rounded-full border-solid border-2 border-white-800' />
-      ),
+      icon: <MapPin className='w-5 h-5 mr-2 rounded-full border-solid ' />,
       to: '/map',
     },
     {
@@ -95,16 +93,16 @@ const NavBar = () => {
                     key={link.label}
                     onClick={() => handleNav(link.to)}
                     variant='ghost'
-                    className={` flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start cursor-pointer
+                    className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start
                       ${
                         isActive
-                          ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none hover:text-white'
-                          : 'border border-white/60 bg-transparent hover:bg-black/10'
+                          ? 'bg-gradient-to-r from-orange-700 to-pink-800 text-white border-none'
+                          : 'border border-white/30 bg-transparent text-white hover:bg-white/5'
                       }
                     `}
                     style={{
                       boxShadow: isActive
-                        ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)'
+                        ? '0 4px 24px 0 rgba(255, 99, 132, 0.08)'
                         : undefined,
                     }}
                   >
@@ -112,7 +110,7 @@ const NavBar = () => {
                     <span
                       className={
                         isActive
-                          ? 'bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg'
+                          ? 'bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-pink-400 drop-shadow-sm'
                           : ''
                       }
                     >
@@ -145,7 +143,7 @@ const NavBar = () => {
             className='w-full h-full object-cover'
           />
         </div>
-        <h1 className='text-2xl lg:text-4xl font-black text-purple-500 drop-shadow-lg -skew-x-6 '>
+        <h1 className='text-4xl font-black drop-shadow-sm -skew-x-6 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent'>
           ZONEOUT
         </h1>
       </div>
@@ -159,16 +157,16 @@ const NavBar = () => {
               key={link.label}
               onClick={() => navigate(link.to)}
               variant='ghost'
-              className={`flex items-center gap-1 lg:gap-2 px-8 py-2 rounded-full font-bold md:text-sm lg:text-base transition-all cursor-pointer
+              className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all cursor-pointer
                 ${
                   isActive
-                    ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white border-none hover:text-white'
-                    : 'border-1 border-purple-800 bg-transparent hover:bg-white/20'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 hover:text-white text-white shadow-sm border-none'
+                    : 'border-white border-2 bg-transparent text-gray hover:from-pink-600 hover:to-purple-700'
                 }
               `}
               style={{
                 boxShadow: isActive
-                  ? '0 4px 24px 0 rgba(255, 99, 132, 0.15)'
+                  ? '0 4px 24px 0 rgba(255, 99, 132, 0.08)'
                   : undefined,
               }}
             >
@@ -176,7 +174,7 @@ const NavBar = () => {
               <span
                 className={
                   isActive
-                    ? 'bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-pink-200 drop-shadow-lg'
+                    ? 'bg-clip-text text-transparent text-white drop-shadow-sm'
                     : ''
                 }
               >

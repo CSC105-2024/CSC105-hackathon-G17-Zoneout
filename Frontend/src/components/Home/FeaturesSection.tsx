@@ -7,23 +7,25 @@ const features = [
     icon: <MapPin className='w-8 h-8' />,
     title: 'Find Friends Nearby',
     description:
-     'Anti-loneliness GPS! Detects fellow humans suffering from the "surrounded by people but still lonely" syndrome within a 5km radius.'
+      'Anti-loneliness GPS! Detects fellow humans suffering from the "surrounded by people but still lonely" syndrome within a 5km radius.',
   },
   {
     icon: <Users className='w-8 h-8' />,
     title: 'Join Fun Activities',
     description:
-    "Cure your existential dread with strangers who get it! From silent co-working to loud karaoke - whatever your social battery needs.",
+      'Cure your existential dread with strangers who get it! From silent co-working to loud karaoke - whatever your social battery needs.',
   },
   {
     icon: <Calendar className='w-8 h-8' />,
     title: 'Create Events',
-    description: 'Host gatherings for people who are tired of feeling invisible in crowds. Small groups, big vibes, zero awkward silence!',
+    description:
+      'Host gatherings for people who are tired of feeling invisible in crowds. Small groups, big vibes, zero awkward silence!',
   },
   {
     icon: <Heart className='w-8 h-8' />,
     title: 'Build Connections',
-    description: 'Solving the "alone together" paradox one meaningful conversation at a time. Because Wi-Fi connections ≠ human connections!',
+    description:
+      'Solving the "alone together" paradox one meaningful conversation at a time. Because Wi-Fi connections ≠ human connections!',
   },
 ];
 

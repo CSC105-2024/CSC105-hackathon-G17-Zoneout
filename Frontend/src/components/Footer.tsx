@@ -14,7 +14,7 @@ const Footer = () => (
     {/* Logo or App Name */}
     <Link to='/'>
       {/* <Logo className="w-14" /> */}
-      <span className='text-2xl font-black text-[var(--color-accent,#6B21A8)] tracking-tight'>
+      <span className='text-2xl font-black text-[var(--color-accent,#6B21A8)] tracking-tight  drop-shadow-sm -skew-x-6 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent'>
         Zoneout
       </span>
     </Link>
