@@ -159,7 +159,7 @@ const ProfileInfoCard = ({
           {/* Edit/Save Buttons */}
           {editable && !isEditing && (
             <Button
-              className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
+              className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer'
               onClick={handleEdit}
               disabled={isLoading}
             >
@@ -172,6 +172,7 @@ const ProfileInfoCard = ({
               <Button
                 onClick={handleSave}
                 disabled={isLoading || !editName || !editPhone}
+                className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer'
               >
                 {isLoading ? 'Saving...' : 'Save Changes'}
               </Button>

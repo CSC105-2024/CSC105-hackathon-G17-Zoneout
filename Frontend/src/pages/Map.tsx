@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { LoadScript } from '@react-google-maps/api';
 import ProfileModal from '@/components/App/ProfileModal';
 import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
@@ -10,6 +10,7 @@ import InteractiveMap from '@/components/App/InteractiveMap';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '@/hooks/use-users';
 
+const GOOGLE_MAP_LIBRARIES = ['places', 'geometry'];
 const samplePost = {
   title: 'Study Group: Calculus',
   author: 'Alice',
@@ -30,24 +31,10 @@ function CreatePostButton({ onClick }: { onClick: () => void }) {
     </div>
   );
 }
-2;
-
-// function PostsNearbyCounter({ count = 5 }: { count?: number }) {
-//   return (
-//     <div className='fixed bottom-8 right-8 z-50'>
-//       <Card className='bg-gradient-to-r from-yellow-300 to-orange-400 backdrop-blur-sm border-4 border-white/60 px-6 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200'>
-//         <span className='text-white font-black text-lg drop-shadow-md'>
-//           🎯 {count} POSTS NEARBY!
-//         </span>
-//       </Card>
-//     </div>
-//   );
-// }
 
 const MapPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
-  // const navigate = useNavigate();
   const [selectedPost, setSelectedPost] = useState<typeof samplePost | null>(
     null
   );
@@ -63,32 +50,36 @@ const MapPage = () => {
     setSelectedPost(null);
   }
   return (
-    <div className='min-h-screen relative overflow-hidden'>
-      <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
-        <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-          <InteractiveMap posts={posts} />
-        </Card>
+    <LoadScript
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={GOOGLE_MAP_LIBRARIES}
+    >
+      <div className='min-h-screen relative overflow-hidden'>
+        <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
+          <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
+            <InteractiveMap posts={posts} />
+          </Card>
+        </div>
+        {user?.data && (
+          <CreatePostButton onClick={() => setShowCreatePost(true)} />
+        )}
+        <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
+        <CreatePostModal
+          open={showCreatePost}
+          onOpenChange={setShowCreatePost}
+          onCreatePost={(post) => setPosts((prev) => [...prev, post])}
+        />
+        <PostModal
+          open={!!selectedPost}
+          post={selectedPost}
+          onClose={handleClose}
+          onViewProfile={handleViewProfile}
+          onJoin={() => {
+            alert('Join clicked!');
+          }}
+        />
       </div>
-      {user?.data && (
-        <CreatePostButton onClick={() => setShowCreatePost(true)} />
-      )}
-      {/* <PostsNearbyCounter count={posts.length} /> */}
-      <ProfileModal open={showProfile} onOpenChange={setShowProfile} />
-      <CreatePostModal
-        open={showCreatePost}
-        onOpenChange={setShowCreatePost}
-        onCreatePost={(post) => setPosts((prev) => [...prev, post])}
-      />
-      <PostModal
-        open={!!selectedPost}
-        post={selectedPost}
-        onClose={handleClose}
-        onViewProfile={handleViewProfile}
-        onJoin={() => {
-          alert('Join clicked!');
-        }}
-      />
-    </div>
+    </LoadScript>
   );
 };
 

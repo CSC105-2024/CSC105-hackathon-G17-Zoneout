@@ -21,7 +21,11 @@ const MyProfile = () => {
     enabled: !!userId,
   });
 
-  const handleUpdateProfile = async (data: { name: string; phone: string; profileEmoji: string }) => {
+  const handleUpdateProfile = async (data: {
+    name: string;
+    phone: string;
+    profileEmoji: string;
+  }) => {
     await updateProfile({ ...data, userId: user.data.id });
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     queryClient.invalidateQueries({ queryKey: ['userPosts', userId] });
@@ -51,7 +55,7 @@ const MyProfile = () => {
             history={isPostsLoading ? [] : postsData?.data || []}
           />
           <Button
-            className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
+            className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer'
             onClick={async () => {
               await logout();
               queryClient.invalidateQueries({ queryKey: ['currentUser'] });
