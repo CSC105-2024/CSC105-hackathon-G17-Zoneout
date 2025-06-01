@@ -1,7 +1,21 @@
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 
-const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { open: boolean, onClose: () => void, post: any, onViewProfile: () => void, onJoin: () => void, onDelete?: () => void }) => {
+const PostModal = ({
+  open,
+  onClose,
+  post,
+  onViewProfile,
+  onJoin,
+  onDelete,
+}: {
+  open: boolean;
+  onClose: () => void;
+  post: any;
+  onViewProfile: () => void;
+  onJoin: () => void;
+  onDelete?: () => void;
+}) => {
   if (!open || !post) return null;
 
   return (
@@ -9,7 +23,8 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { o
       <div
         className='w-full max-w-md rounded-2xl shadow-2xl p-6 pb-8 mx-4 mb-10 relative animate-slide-up bg-gradient-to-br from-pink-500 to-purple-600'
         style={{
-          background: 'linear-gradient(to bottom right, #fde68a, #f9a8d4, #a78bfa)',
+          background:
+            'linear-gradient(to bottom right, #fde68a, #f9a8d4, #a78bfa)',
           position: 'relative',
         }}
       >
@@ -36,10 +51,16 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { o
             <span className='text-2xl font-bold'>x</span>
           </button>
 
-          <h2 className='text-2xl font-bold mb-2' style={{ color: 'var(--color-primary)' }}>
+          <h2
+            className='text-2xl font-bold mb-2'
+            style={{ color: 'var(--color-primary)' }}
+          >
             {post.title}
           </h2>
-          <div className='mb-2 text-sm' style={{ color: 'var(--color-accent-primary)' }}>
+          <div
+            className='mb-2 text-sm'
+            style={{ color: 'var(--color-accent-primary)' }}
+          >
             by <span className='font-semibold'>{post.user?.name}</span>
           </div>
           <div className='mb-6' style={{ color: 'var(--color-primary)' }}>
@@ -67,7 +88,7 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { o
                 color: '#fff',
               }}
             >
-              Join
+              Interested
             </Button>
             {onDelete && (
               <Button
@@ -76,7 +97,7 @@ const PostModal = ({ open, onClose, post, onViewProfile, onJoin, onDelete }: { o
                 style={{ borderRadius: 'var(--radius)' }}
               >
                 <span className='flex items-center gap-2'>
-                  <Trash/>
+                  <Trash />
                   Delete
                 </span>
               </Button>
