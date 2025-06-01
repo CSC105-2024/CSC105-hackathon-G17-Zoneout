@@ -11,6 +11,8 @@ import LoginPage from './pages/LoginPage';
 import AppLayout from './AppLayout';
 import MapPage from './pages/MapPage';
 import MyProfile from './pages/MyProfile';
+import TermsPage from './pages/TermsPage';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -23,6 +25,7 @@ const router = createBrowserRouter([
       { path: 'signup', element: <SignupPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'safety-privacy', element: <SafetyPrivacyPage /> },
+      { path: 'terms', element: <TermsPage /> },
     ],
   },
   { path: '*', element: <NotFound /> },
