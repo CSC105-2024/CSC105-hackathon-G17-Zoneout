@@ -253,7 +253,7 @@ export const refreshTokenController = async (c: Context) => {
     const newAccessToken = jwt.sign(
       { id: decoded.id, email: decoded.email, name: decoded.name },
       jwtSecret,
-      { expiresIn: '2h' }
+      { expiresIn: '15m' }
     );
     const newRefreshToken = jwt.sign({ id: decoded.id }, jwtSecret, {
       expiresIn: '7d',

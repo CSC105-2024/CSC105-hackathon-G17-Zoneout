@@ -62,7 +62,7 @@ const NavBar = () => {
   };
 
   const drawer = (
-    <div className='fixed inset-0 z-50 md:hidden'>
+    <div className='fixed inset-0 z-50 lg:hidden'>
       {/* Backdrop */}
       <div
         className='fixed inset-0 bg-black/20 backdrop-blur-sm'
@@ -96,8 +96,8 @@ const NavBar = () => {
                     className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all justify-start
                       ${
                         isActive
-                          ? 'bg-gradient-to-r from-orange-700 to-pink-800 text-white border-none'
-                          : 'border border-white/30 bg-transparent text-white hover:bg-white/5'
+                          ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 hover:text-white text-white shadow-sm border-none'
+                          : 'border-white border-2 bg-transparent text-gray hover:from-pink-600 hover:to-purple-700'
                       }
                     `}
                     style={{
@@ -110,7 +110,7 @@ const NavBar = () => {
                     <span
                       className={
                         isActive
-                          ? 'bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-pink-400 drop-shadow-sm'
+                          ? 'bg-clip-text text-transparent bg-gradient-to-r text-white'
                           : ''
                       }
                     >
@@ -149,7 +149,7 @@ const NavBar = () => {
       </div>
 
       {/* Desktop Nav */}
-      <div className='hidden md:flex items-center gap-4 lg:gap-8 h-14'>
+      <div className='hidden lg:flex items-center gap-4 lg:gap-8 h-14'>
         {navLinks.map((link) => {
           const isActive = location.pathname === link.to;
           return (
@@ -157,7 +157,7 @@ const NavBar = () => {
               key={link.label}
               onClick={() => navigate(link.to)}
               variant='ghost'
-              className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-sm md:text-base transition-all cursor-pointer
+              className={`flex items-center gap-1 lg:gap-2 px-8 py-2 rounded-full font-bold text-sm lg:text-base transition-all cursor-pointer
                 ${
                   isActive
                     ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 hover:text-white text-white shadow-sm border-none'
@@ -187,7 +187,7 @@ const NavBar = () => {
 
       {/* Mobile Hamburger */}
       <button
-        className='md:hidden p-2 rounded-lg text-purple-800 hover:bg-white/20 transition'
+        className='lg:hidden p-2 rounded-lg text-purple-800 hover:bg-white/20 transition'
         onClick={() => setMobileOpen((v) => !v)}
         aria-label='Open menu'
       >

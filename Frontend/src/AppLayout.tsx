@@ -19,7 +19,7 @@ const AppLayout = () => (
       <NavBar />
       {/* Dynamic navigation bar layout based on route and auth state */}
       <Outlet />
-      <ReactQueryDevtools />
+      {/* <ReactQueryDevtools /> */}
       <Footer />
     </div>
   </QueryClientProvider>
