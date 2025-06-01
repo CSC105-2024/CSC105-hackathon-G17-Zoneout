@@ -39,7 +39,13 @@ export const getCurrentUserController = async (c: Context) => {
 
   const user = await db.user.findUnique({
     where: { id: Number(cUser.id) },
-    select: { id: true, name: true, email: true, phone: true, profileEmoji: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      profileEmoji: true,
+    },
   });
 
   if (!user) return c.json(createErrorResponse('User not found'), 404);
@@ -242,7 +248,7 @@ export const refreshTokenController = async (c: Context) => {
     const newAccessToken = jwt.sign(
       { id: decoded.id, email: decoded.email, name: decoded.name },
       process.env.JWT_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: '30m' }
     );
     const newRefreshToken = jwt.sign(
       { id: decoded.id },

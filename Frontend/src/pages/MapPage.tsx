@@ -8,6 +8,7 @@ import CreatePostModal from '@/components/App/CreatePostModal';
 import PostModal from '@/components/App/PostModal';
 import { createPost, getPosts, CreatePostData } from '@/api/post';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 type Post = {
   id: number;
@@ -57,6 +58,7 @@ const MapPage = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const navigate = useNavigate();
 
   const handleCreatePost = async (postData: CreatePostData) => {
     try {
@@ -64,7 +66,7 @@ const MapPage = () => {
       const response = await createPost(postData);
       if (response.success) {
         // Immediately increment refresh trigger
-        setRefreshTrigger(prev => prev + 1);
+        setRefreshTrigger((prev) => prev + 1);
         toast.success('Post created successfully!');
         setShowCreatePost(false);
       }
@@ -80,9 +82,9 @@ const MapPage = () => {
     <div className='min-h-screen relative overflow-hidden'>
       <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
         <Card className='h-full overflow-hidden border-4 border-white/50 shadow-2xl rounded-3xl transform hover:scale-[1.01] transition-transform duration-300'>
-          <InteractiveMap 
+          <InteractiveMap
             refreshTrigger={refreshTrigger}
-            onMarkerClick={(post) => setSelectedPost(post)} 
+            onMarkerClick={(post) => setSelectedPost(post)}
           />
         </Card>
       </div>
@@ -98,7 +100,7 @@ const MapPage = () => {
         post={selectedPost}
         onClose={() => setSelectedPost(null)}
         onViewProfile={() => {
-          alert('View Profile clicked!');
+          navigate('/profile');
         }}
         onJoin={() => {
           alert('Join clicked!');

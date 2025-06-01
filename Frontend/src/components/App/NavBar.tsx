@@ -143,7 +143,7 @@ const NavBar = () => {
             className='w-full h-full object-cover'
           />
         </div>
-        <h1 className='text-4xl font-black drop-shadow-sm -skew-x-6 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent'>
+        <h1 className='text-2xl lg:text-4xl font-black drop-shadow-sm -skew-x-6 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent'>
           ZONEOUT
         </h1>
       </div>
@@ -157,7 +157,7 @@ const NavBar = () => {
               key={link.label}
               onClick={() => navigate(link.to)}
               variant='ghost'
-              className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-base transition-all cursor-pointer
+              className={`flex items-center gap-2 px-8 py-2 rounded-full font-bold text-sm md:text-base transition-all cursor-pointer
                 ${
                   isActive
                     ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 hover:text-white text-white shadow-sm border-none'
