@@ -58,24 +58,6 @@ const MapPage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleCreatePost = async (postData: CreatePostData) => {
-    try {
-      setLoading(true);
-      const response = await createPost(postData);
-      if (response.success) {
-        // Immediately increment refresh trigger
-        setRefreshTrigger(prev => prev + 1);
-        toast.success('Post created successfully!');
-        setShowCreatePost(false);
-      }
-    } catch (error) {
-      console.error('Error creating post:', error);
-      toast.error('Failed to create post');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className='min-h-screen relative overflow-hidden'>
       <div className='relative h-[calc(100vh-140px)] mx-6 mb-6 mt-4'>
@@ -91,7 +73,8 @@ const MapPage = () => {
       <CreatePostModal
         open={showCreatePost}
         onOpenChange={setShowCreatePost}
-        onCreatePost={handleCreatePost}
+        refreshTrigger={refreshTrigger}
+        setRefreshTrigger={setRefreshTrigger}
       />
       <PostModal
         open={!!selectedPost}

@@ -20,7 +20,8 @@ const iconOptions = [
 type CreatePostModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreatePost: (post: any) => void;
+  setRefreshTrigger: React.Dispatch<React.SetStateAction<number>>;
+  refreshTrigger: number;
 };
 
 // Memoize the icon buttons to prevent unnecessary re-renders
@@ -35,11 +36,12 @@ const IconButton = memo(({ name, icon: Icon, selected, onClick }: { name: string
   </button>
 ));
 
-const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalProps) => {
+const CreatePostModal = ({ open, onOpenChange, setRefreshTrigger, refreshTrigger }: CreatePostModalProps) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
     libraries: ['places', 'geometry']
   });
+  console.log(typeof setRefreshTrigger);
 
   const [form, setForm] = useState({
     title: '',
@@ -226,13 +228,13 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
     );
   }, [mapRef]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
       const response = await createPost(form);
+      console.log(response.success);
       if (response.success) {
-        await onCreatePost(form);
         onOpenChange(false);
         toast.success('Post created successfully!');
       } else {
@@ -243,8 +245,9 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       toast.error('Failed to create post. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setRefreshTrigger(prev => prev + 1);
     }
-  }, [form, onCreatePost, onOpenChange]);
+  };
 
   // Show error if map fails to load
   if (loadError) {
@@ -509,4 +512,4 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
   );
 };
 
-export default memo(CreatePostModal);
+export default CreatePostModal;
