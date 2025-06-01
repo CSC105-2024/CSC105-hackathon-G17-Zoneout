@@ -90,7 +90,7 @@ type InteractiveMapProps = {
   refreshTrigger?: number;
   isLoaded: boolean;
 };
-const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0, isLoaded }: InteractiveMapProps) => {
+const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapProps) => {
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -167,26 +167,26 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0, isLoaded }: Interac
   }, [refreshTrigger]);
 
   // Pre-generate SVG strings for all icons
-  useEffect(() => {
-    const generateIconSVGs = async () => {
-      const svgs: { [key: string]: string } = {};
+  // useEffect(() => {
+  //   const generateIconSVGs = async () => {
+  //     const svgs: { [key: string]: string } = {};
 
-      for (const [key, IconComponent] of Object.entries(iconMap)) {
-        try {
-          svgs[key] = await iconToSVG(IconComponent);
-        } catch (error) {
-          console.warn(`Failed to generate SVG for ${key}:`, error);
-          svgs[key] = '<circle cx="12" cy="12" r="8" />'; // Fallback
-        }
-      }
+  //     for (const [key, IconComponent] of Object.entries(iconMap)) {
+  //       try {
+  //         svgs[key] = await iconToSVG(IconComponent);
+  //       } catch (error) {
+  //         console.warn(`Failed to generate SVG for ${key}:`, error);
+  //         svgs[key] = '<circle cx="12" cy="12" r="8" />'; // Fallback
+  //       }
+  //     }
 
-      setIconSVGs(svgs);
-    };
+  //     setIconSVGs(svgs);
+  //   };
 
-    if (isLoaded) {
-      generateIconSVGs();
-    }
-  }, [isLoaded]);
+  //   if (isLoaded) {
+  //     generateIconSVGs();
+  //   }
+  // }, [isLoaded]);
 
   // Track user location
   useEffect(() => {
@@ -244,7 +244,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0, isLoaded }: Interac
     }
   };
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className='w-full h-full flex items-center justify-center text-gray-400 bg-white/50 rounded-2xl'>
         Loading map...
