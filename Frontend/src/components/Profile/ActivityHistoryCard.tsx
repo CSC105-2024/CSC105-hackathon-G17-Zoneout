@@ -39,8 +39,14 @@ const ActivityHistoryCard = ({ history }: { history: any[] }) => {
   // Dummy save handler, replace with API call
   const handleSave = async (activityId: number) => {
     try {
-      console.log('Saving activity:', activityId, editFields);
-      // Only send editable fields
+      const createdAt = new Date(editFields.createdAt);
+      const expiresAt = new Date(editFields.expiresAt);
+
+      if (createdAt >= expiresAt) {
+        alert('Start time must be before the expiration time.');
+        return;
+      }
+
       const payload: any = {
         content: editFields.content,
         createdAt: editFields.createdAt,
@@ -160,19 +166,20 @@ const ActivityHistoryCard = ({ history }: { history: any[] }) => {
                     <>
                       <Button
                         onClick={() => handleSave(activity.id)}
-                        className='bg-green-500 text-white'
+                        className=' hover:bg-green-800 text-white font-bold text-lg rounded-full px-6 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 bg-green-500 text-white cursor-pointer'
                       >
                         Save
                       </Button>
                       <Button
                         onClick={() => setEditingId(null)}
-                        className='bg-gray-300'
+                        className='hover:bg-red-800 text-white font-bold text-lg rounded-full px-5 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 bg-red-500 text-white cursor-pointer'
                       >
                         Cancel
                       </Button>
                     </>
                   ) : (
                     <Button
+                      className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer'
                       onClick={() => {
                         setEditingId(activity.id);
                         setEditFields({
