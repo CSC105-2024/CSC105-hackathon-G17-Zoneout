@@ -1,8 +1,15 @@
 import SectionCard from './SectionCard';
 import { Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useNavigate } from 'react-router-dom';
 
-function HeroSection({ onExplore }: { onExplore: () => void }) {
+function HeroSection() {
+  const navigate = useNavigate();
+
+  const handleExplore = () => {
+    navigate('/map');
+  };
+
   return (
     <SectionCard className='py-20 text-center'>
       <div className='max-w-4xl mx-auto'>
@@ -14,7 +21,10 @@ function HeroSection({ onExplore }: { onExplore: () => void }) {
           is an adventure!
         </p>
         <div className='flex flex-col sm:flex-row gap-6 justify-center '>
-          <Button className='bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60 max-w-2xl  '>
+          <Button 
+            onClick={handleExplore}
+            className='bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-12 py-6 rounded-full shadow-2xl text-2xl font-black transform hover:scale-105 transition-all duration-300 border-4 border-white/60 max-w-2xl  '
+          >
             <span className='flex items-center gap-2'>
               <Sparkles className='inline' />
               Start Exploring!

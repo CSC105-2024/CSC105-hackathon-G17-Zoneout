@@ -16,6 +16,7 @@ export const createPost = async (data: CreatePostData) => {
     latitude,
     longitude,
     category: data.category,
+    icon: data.icon,
     isEvent: data.category === 'Event',
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
   };
@@ -24,8 +25,15 @@ export const createPost = async (data: CreatePostData) => {
     const response = await Axios.post('/api/posts/create-post', postData);
     console.log('Backend response:', response.data);
     return response.data;
-  } catch (error) {
-    console.error('Error creating post:', error);
+  } catch (error: any) {
+    // More detailed error logging
+    console.error('Error creating post:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      headers: error.response?.headers,
+    });
     throw error;
   }
 };

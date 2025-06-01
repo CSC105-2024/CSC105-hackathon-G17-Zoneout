@@ -6,6 +6,7 @@ const createPost = async ({
   latitude,
   longitude,
   category,
+  icon,
   isEvent,
   expiresAt,
 }: {
@@ -15,6 +16,7 @@ const createPost = async ({
   longitude: number;
   category: string;
   isEvent?: boolean;
+  icon?: string;
   expiresAt: Date;
 }) => {
   const newPost = await db.post.create({
@@ -25,6 +27,7 @@ const createPost = async ({
       longitude,
       category,
       isEvent: isEvent || false,
+      icon,
       expiresAt,
     },
   });

@@ -1,6 +1,6 @@
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
-import { Coffee, Gamepad, Book, Dumbbell, LocateFixed } from 'lucide-react';
+import { Coffee, Gamepad, Book, Dumbbell, LocateFixed, User, Ghost } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
 import { getPosts } from '@/api/post';
 import { toast } from 'sonner';
@@ -42,7 +42,7 @@ const iconToSVG = (IconComponent: any): Promise<string> => {
 };
 
 const iconMap: { [key: string]: any } = {
-  Coffee,
+  Ghost,
   Gamepad,
   Book,
   Dumbbell,
@@ -119,7 +119,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
             description: post.content,
             category: post.category,
             location: `${post.latitude}, ${post.longitude}`,
-            icon: 'Coffee',
+            icon: post.icon || 'Ghost',
             user: post.user
               ? {
                   name: post.user.name,
@@ -291,7 +291,7 @@ const InteractiveMap = ({ onMarkerClick, refreshTrigger = 0 }: InteractiveMapPro
           const pos = parseLatLng(post.location);
           const iconContent =
             iconSVGs[post.icon] ||
-            iconSVGs.Coffee ||
+            iconSVGs.Ghost ||
             '<circle cx="12" cy="12" r="8" />';
 
           return (

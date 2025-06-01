@@ -34,7 +34,10 @@ const IconButton = memo(({ name, icon: Icon, selected, onClick }: { name: string
     <Icon className='w-7 h-7' />
   </button>
 ));
-
+// const [userLocation, setUserLocation] = useState<{
+//   lat: number;
+//   lng: number;
+// } | null>(null);
 const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalProps) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
@@ -103,7 +106,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       toast.error('Failed to initialize location search. Please try again.');
     }
   }, [isLoaded, mapRef]);
-
   // Initialize current location when modal opens
   useEffect(() => {
     if (!isLoaded || !open || form.location) return;
@@ -232,7 +234,7 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
       setIsSubmitting(true);
       const response = await createPost(form);
       if (response.success) {
-        await onCreatePost(form);
+        await onCreatePost(response.data);
         onOpenChange(false);
         toast.success('Post created successfully!');
       } else {
@@ -388,20 +390,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                     />
                     <Search className='w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
                   </div>
-                  <Button
-                    type='button'
-                    onClick={handleUseCurrentLocation}
-                    disabled={loadingLocation}
-                    className='flex items-center gap-1 px-3 py-2'
-                    style={{
-                      borderRadius: 'var(--radius)',
-                      background: 'var(--color-accent-primary)',
-                      color: '#fff',
-                    }}
-                  >
-                    <MapPin className='w-4 h-4' />
-                    {loadingLocation ? '...' : 'Use Current'}
-                  </Button>
                 </div>
 
                 <div className='h-48 rounded-lg overflow-hidden relative'>
@@ -460,20 +448,6 @@ const CreatePostModal = ({ open, onOpenChange, onCreatePost }: CreatePostModalPr
                     background: 'rgba(255,255,255,0.95)',
                   }}
                 />
-              </div>
-            </div>
-            <div>
-              <label className='block font-medium mb-1'>Icon</label>
-              <div className='flex gap-4 mb-2'>
-                {iconOptions.map(({ name, icon: Icon }) => (
-                  <IconButton
-                    key={name}
-                    name={name}
-                    icon={Icon}
-                    selected={form.icon === name}
-                    onClick={() => setForm((prev) => ({ ...prev, icon: name }))}
-                  />
-                ))}
               </div>
             </div>
           </div>
