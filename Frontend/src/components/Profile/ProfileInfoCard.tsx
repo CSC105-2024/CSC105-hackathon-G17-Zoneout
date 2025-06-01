@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useState } from 'react';
 
-const PROFILE_EMOJIS = ['😄', '🤗', '😜', '🤩', '😁', '😎', '🕺', '🥳'];
+const PROFILE_EMOJIS = [
+  '😄', '🤗', '😜', '🤩', '😁', '😎', '🕺', '🥳'
+
+  
+];
 
 interface UserData {
   id?: string;
@@ -24,11 +28,7 @@ const ProfileInfoCard = ({
 }: {
   user: UserData;
   editable?: boolean;
-  onUpdateProfile?: (data: {
-    name: string;
-    phone: string;
-    profileEmoji: string;
-  }) => Promise<void>;
+  onUpdateProfile?: (data: { name: string; phone: string; profileEmoji: string }) => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(user.name);
@@ -60,11 +60,7 @@ const ProfileInfoCard = ({
     setIsLoading(true);
     try {
       if (onUpdateProfile) {
-        await onUpdateProfile({
-          name: editName,
-          phone: editPhone,
-          profileEmoji: editEmoji,
-        });
+        await onUpdateProfile({ name: editName, phone: editPhone, profileEmoji: editEmoji });
       }
       setIsEditing(false);
       setShowEmojiPicker(false);
@@ -79,7 +75,7 @@ const ProfileInfoCard = ({
     <Card className='p-8 bg-white/90 backdrop-blur-sm border-4 border-pink-300 rounded-3xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-300'>
       <div className='flex flex-col md:flex-row items-center gap-6'>
         <div className='relative'>
-          <div
+          <div 
             className='w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-xl transform cursor-pointer'
             onClick={() => isEditing && setShowEmojiPicker(!showEmojiPicker)}
           >
@@ -140,16 +136,8 @@ const ProfileInfoCard = ({
               <input
                 className='border rounded px-2 py-1'
                 value={editPhone}
-                onChange={(e) => {
-                  // Only allow digits
-                  const value = e.target.value.replace(/\D/g, '');
-                  setEditPhone(value);
-                }}
+                onChange={(e) => setEditPhone(e.target.value)}
                 disabled={isLoading}
-                type='tel'
-                inputMode='numeric'
-                pattern='[0-9]*'
-                maxLength={15} // optional: limit length
               />
             ) : (
               <span>{user.phone || '-'}</span>
@@ -158,7 +146,7 @@ const ProfileInfoCard = ({
           {/* Edit/Save Buttons */}
           {editable && !isEditing && (
             <Button
-              className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer'
+              className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200'
               onClick={handleEdit}
               disabled={isLoading}
             >
@@ -171,7 +159,6 @@ const ProfileInfoCard = ({
               <Button
                 onClick={handleSave}
                 disabled={isLoading || !editName || !editPhone}
-                className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer'
               >
                 {isLoading ? 'Saving...' : 'Save Changes'}
               </Button>
