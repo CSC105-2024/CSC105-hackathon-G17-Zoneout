@@ -25,7 +25,7 @@ export const safetyCards = [
     icon: '🔒',
     title: 'Location Privacy',
     description:
-      'Your exact location is never shared. We use smart location fuzzing to protect your privacy while still enabling meaningful connections.',
+      'We securely store your location data and never share it with third parties, just within the Zoneout community.',
     features: [
       'Location blur radius (50-500m)',
       'Home/work privacy zones',
@@ -37,7 +37,7 @@ export const safetyCards = [
     icon: '👤',
     title: 'User Verification',
     description:
-      'Multi-layer verification system ensures authentic and trustworthy community members.',
+      'Multi-layer verification system ensures authentic and trustworthy community members. Read More below.',
     features: [
       'Email & phone verification',
       'Photo verification optional',
@@ -47,7 +47,7 @@ export const safetyCards = [
   },
   {
     icon: '🚨',
-    title: 'Report & Block',
+    title: 'Let us know',
     description:
       'Powerful tools to maintain a safe and respectful community environment.',
     features: [
@@ -59,13 +59,13 @@ export const safetyCards = [
   },
   {
     icon: '💬',
-    title: 'Secure Communication',
-    description: 'All your conversations are encrypted and private by design.',
+    title: 'Privacy First',
+    description: 'We don’t allow messaging to keep interactions simple, respectful, and secure by default.',
     features: [
-      'End-to-end encryption',
-      'No message storage',
-      'Screenshot notifications',
-      'Auto-delete messages',
+      'No private messaging',
+      'Reduced risk of harassment',
+      'Stronger boundary control',
+      'Privacy-focused by design',
     ],
   },
   {
