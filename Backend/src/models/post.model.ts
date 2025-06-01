@@ -37,7 +37,7 @@ const createPost = async ({
 
 export { createPost };
 
-const getPostsByUserId = async (userId: number) => {
+export const getPostsByUserId = async (userId: number) => {
   const posts = await db.post.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
@@ -55,8 +55,6 @@ const getPostsByUserId = async (userId: number) => {
 
   return posts;
 };
-
-export { getPostsByUserId };
 
 const editPost = async (
   postId: number,

@@ -42,3 +42,8 @@ export function useUpdateProfile() {
     }) => updateProfile(data),
   });
 }
+
+const getPostsByUserId = async (userId: number) => {
+  // ... implementation
+};
+export { getPostsByUserId };

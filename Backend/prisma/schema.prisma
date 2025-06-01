@@ -1,45 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  name String  @unique
-  password String  
-  phone    String
-  profileEmoji String @default("👤")
-  accessToken String? @db.VarChar(255)
-  refreshToken String? @default("") @db.VarChar(255)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String   @unique
+  password     String
+  phone        String
+  accessToken  String?  @db.VarChar(255)
+  refreshToken String?  @default("") @db.VarChar(255)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  profileEmoji String   @default("?")
+  posts        Post[]
 }
 
 model Post {
-  id          Int       @id @default(autoincrement())
-  content     String
-  latitude    Float
-  longitude   Float
-  category    String
-  icon        String?
-  isEvent     Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  expiresAt   DateTime   
-  userId      Int
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  content   String
+  latitude  Float
+  longitude Float
+  category  String
+  isEvent   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  userId    Int
+  icon      String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Post_userId_fkey")
 }

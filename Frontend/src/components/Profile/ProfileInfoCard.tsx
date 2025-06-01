@@ -191,11 +191,11 @@ const ProfileInfoCard = ({
         </div>
       </div>
       <div className='flex justify-center mt-8 pt-8 border-t-4 border-pink-200'>
-        <div className='text-center p-4 bg-gradient-to-br from-yellow-100/50 to-orange-200/50 rounded-2xl border-2 border-orange-200 px-20 w-full md:w-auto'>
-          <div className='text-4xl font-black text-orange-800 mb-2'>
+        <div className='bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-600 hover:to-pink-500 text-white font-bold text-lg rounded-full px-8 py-3 shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer w-full md:w-auto text-center p-4'>
+          <div className='text-4xl font-black mb-2'>
             {user.posts}
           </div>
-          <div className='text-lg text-orange-600 font-bold'>Posts Created</div>
+          <div className='text-lg font-bold'>Posts Created</div>
         </div>
       </div>
     </Card>
